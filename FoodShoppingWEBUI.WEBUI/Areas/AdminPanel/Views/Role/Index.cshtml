@@ -1,0 +1,52 @@
+﻿@using FoodShoppingWEBUI.Core.DTO;
+@model List<RoleDTO>
+
+@{
+    ViewData["Title"] = "Role";
+    Layout = "~/Areas/AdminPanel/Views/_Layout.cshtml";
+}
+
+@Html.AntiForgeryToken()
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Roller</h3>
+        <div class="card-tools">
+            <button type="button" class="btn btn-block btn-info" data-toggle="modal" data-target="#modal-YeniRol">Ekle</button>
+
+        </div>
+    </div>
+    <div class="card-body">
+
+        @await Component.InvokeAsync("Role",Model)
+
+
+
+    </div>
+
+</div>
+
+<div class="modal fade" id="modal-YeniRol">
+    <div class="modal-dialog modal-YeniRol">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Yeni Rol</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="txtRoleAd_Add">Rol Adı</label>
+                    <input type="text" class="form-control" id="txtRoleAd_Add">
+                </div>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Kapat</button>
+                <button type="button" class="btn btn-primary" id="btnAddRole">Kaydet</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+

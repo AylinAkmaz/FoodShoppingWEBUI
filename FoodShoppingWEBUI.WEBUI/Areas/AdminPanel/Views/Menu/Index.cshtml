@@ -1,0 +1,527 @@
+﻿@using FoodShoppingWEBUI.Core.ViewModel;
+@model MenuViewModel
+@{
+    ViewData["Title"] = "Menüler";
+    Layout = "~/Areas/AdminPanel/Views/_Layout.cshtml";
+}
+
+@Html.AntiForgeryToken()
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Menüler</h3>
+        <div class="card-tools">
+            <button type="button" class="btn btn-block btn-info" data-toggle="modal" data-target="#modal-NewMenu">Ekle</button>
+            <button type="button" class="btn btn-block btn-warning" data-toggle="modal" data-target="#modal-GetFoodProduct">Menü Ürünleri</button>
+            <button type="button" class="btn btn-block btn-warning" data-toggle="modal" data-target="#modal-GetFoodDetail">Mağzalar</button>
+
+
+        </div>
+    </div>
+    <div class="card-body">
+        <table id="tblMenu" class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th style="width: 10px">#</th>
+                    <th>Menü Adı</th>
+                    <th>Menü Ürünleri</th>
+                    <th>Mağzalar</th>
+                    <th>Menü Açıklaması</th>
+                    <th>Menü Resmi</th>
+                    <th>Menü Fiyatı</th>
+                    <th style="width:20%"></th>
+
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    for (int i = 0; i < Model.Menus.Count(); i++)
+                    {
+                        string menuImagePath = "/MediaUpload/" + @Model.Menus[i].FeaturedImage;
+
+                        <tr>
+                            <td>@Convert.ToInt32(i+1)</td>
+                            <a href="@menuImagePath" data-toggle="lightbox" data-title="@Model.Menus[i].Name">
+                                <img src="@menuImagePath" class="img-fluid mb-2" alt="@Model.Menus[i].Name" width="100" />
+                            </a>
+                            <td>@Model.Menus[i].Name</td>
+                            <td>@Model.Menus[i].FoodProductName</td>
+                            <td>@Model.Menus[i].FoodDetailName</td>
+                            <td>@Model.Menus[i].Description</td>
+                            <td>@Model.Menus[i].UnitPrice</td>
+
+                            <td>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-info btnMenuDetail" data-guid=@Model.Menus[i].Guid data-toggle="modal" data-target="#modal-DetayMenu">Güncelle</button>
+                                    <button type="button" class="btn btn-danger btnMenuDetailSil" data-guid=@Model.Menus[i].Guid>Sil</button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal fade" id="modal-GetFoodProduct">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Menü Ürünleri</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="ddlMenuFoodProduct">Menü Ürünü</label>
+                    <select class="custom-select rounded-0" id="ddlMenuFoodProduct">
+                        @{
+                            for (int i = 0; i < Model.FoodProducts.Count(); i++)
+                            {
+                                <option value=@Model.FoodProducts[i].Guid>@Model.FoodProducts[i].Name</option>
+                            }
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Kapat</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal-GetFoodDetail">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Mağazası</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="ddlMenuFoodDetail">Mağaza</label>
+                    <select class="custom-select rounded-0" id="ddlMenuFoodDetail">
+                        @{
+                            for (int i = 0; i < Model.FoodDetails.Count(); i++)
+                            {
+                                <option value=@Model.FoodDetails[i].Guid>@Model.FoodDetails[i].Name</option>
+                            }
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Kapat</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="modal-NewMenu">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Menü Ekle</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="txtMenuName_Add">Menü Adı</label>
+                    <input type="text" class="form-control" id="txtMenuName_Add">
+                </div>
+
+                <div class="form-group">
+                    <label for="ddlMenuFoodDetail">Mağazası</label>
+                    <select class="custom-select rounded-0" id="ddlMenuFoodDetailAdd">
+                        @{
+                            for (int i = 0; i < Model.FoodDetails.Count(); i++)
+                            {
+                                <option value=@Model.FoodDetails[i].Guid>@Model.FoodDetails[i].Name</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="ddlMenuFoodProduct_Add">Menü Ürünü</label>
+                    <select class="custom-select rounded-0" id="ddlMenuFoodProduct_Add">
+                        @{
+                            for (int i = 0; i < Model.FoodProducts.Count(); i++)
+                            {
+                                <option value=@Model.FoodProducts[i].Guid>@Model.FoodProducts[i].Name</option>
+                            }
+                        }
+                    </select>
+                </div>
+
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="txtMenuDescription_Add">Menü Açıklaması</label>
+                        <input type="text" class="form-control" id="txtMenuDescription_Add">
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="txtMenuUnitPrice_Add">Menü Fiyatı</label>
+                            <input type="text" class="form-control" id="txtMenuUnitPrice_Add">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="fuMenuFeaturedImage_Add">Öne Çıkan Görsel</label>
+                            <div class="input-group">
+                                <div class="custom-file">
+                                    <input type="file" class="custom-file-input" id="fuMenuFeaturedImage_Add">
+                                    <label class="custom-file-label" for="fuMenuFeaturedImage_Add">Dosya Seç</label>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Kapat</button>
+                        <button type="button" class="btn btn-primary" id="btnMenu_Add">Kaydet</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal-MenuUpdate">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Menu Güncelle</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="txtMenuName_Update">Menu Adı</label>
+                    <input type="text" class="form-control" id="txtMenuName_Update">
+                </div>
+
+                <div class="form-group">
+                    <label for="ddlMenuFoodDetail"> Mağazası</label>
+                    <select class="custom-select rounded-0" id="ddlMenuFoodDetail_Update">
+                        @{
+                            for (int i = 0; i < Model.FoodDetails.Count; i++)
+                            {
+                                <option value=@Model.FoodDetails[i].Guid>@Model.FoodDetails[i].Name</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="ddlMenuFoodProduct_Update"> Menü Ürünü</label>
+                    <select class="custom-select rounded-0" id="ddlMenuFoodProduct_Update">
+                        @{
+                            for (int i = 0; i < Model.FoodProducts.Count; i++)
+                            {
+                                <option value=@Model.FoodProducts[i].Guid>@Model.FoodProducts[i].Name</option>
+                            }
+                        }
+                    </select>
+                </div>
+
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="txtMenuDescription_Update">Menü Açıklaması</label>
+                        <input type="text" class="form-control" id="txtMenuDescription_Update">
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="txtMenuUnitPrice_Update">Menü Fiyatı</label>
+                            <input type="text" class="form-control" id="txtMenuUnitPrice_Update">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="fuMenuFeaturedImage_Update">Öne Çıkan Görsel</label>
+                            <div class="input-group">
+                                <div class="custom-file">
+                                    <input type="file" class="custom-file-input" id="fuMenuFeaturedImage_Update">
+                                    <label class="custom-file-label" for="fuMenuFeaturedImage_Update">Dosya Seç</label>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Kapat</button>
+                <button type="button" class="btn btn-primary" id="btnMenu_Update">Kaydet</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    $(function () {
+        $("#tblMenu").DataTable({
+            "responsive": true,
+            "lengthChange": false,
+            "autoWidth": false,
+            "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+        }).buttons().container().appendTo('#tblMenu_wrapper .col-md-6:eq(0)');
+
+        $('#btnMenu_Add').click(function () {
+
+            var menu = {
+                Name: $('#txtMenuName_Add').val(),
+                foodDetailGuid: $('#ddlFoodDetailFoodCategoryAdd').val(),
+                foodProduct: $('#ddlFoodDetailFoodProducteAdd').val(),
+            }
+
+
+            var formData = new FormData();
+            formData.append("Name", menu.Name);
+            formData.append("foodDetailGuid", menu.foodDetailGuid);
+            formData.append("foodProductGuid", menu.foodProductGuid);
+
+
+
+            $.ajax({
+                url: '/Admin/AddMenu',
+                type: 'POST',
+                data: formData,
+                cahce: false,
+                contentType: false,
+                processData: false,
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN", $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                success: function (response) {
+                    if (response.success) {
+
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Menu Başarıyla Eklendi',
+                            showConfirmButton: false,
+                            timer: 3000
+                        })
+                        setTimeout(function () { window.location.reload() }, 3000);
+
+                    }
+                    else {
+
+                        var HataBilgisi = response.HataBilgisi;
+                        var Hatalar = '';
+                        for (var i = 0; i < HataBilgisi.Hata.length; i++) {
+                            Hatalar += HataBilgisi.Hata[i] + '</br>';
+                        }
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: HataBilgisi.HataAciklama,
+                            html: Hatalar
+                        })
+
+
+                    }
+                },
+                error: function (err) {
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: "HATA OLUŞTU. TEKRAR DENEYİNİZ.",
+                    })
+                }
+            });
+
+        });
+
+        $('.btnMenu').click(function () {
+            var guid = $(this).attr('data-guid');
+            $.ajax({
+                url: '/Admin/Menu/' + guid,
+                type: 'get',
+                success: function (response) {
+                    if (response.success) {
+
+                        $('#txtMenuName_Update').val(response.storeDetail.Name);
+
+                        $('#btnMenu_Update').attr('data-guid', guid)
+
+                        const select = document.querySelector('#ddlMenuFoodDetail_Update')
+                        select.value = response.menu.foodDetailGuid
+                        const select = document.querySelector('#ddlMenuFoodProduct_Update')
+                        select.value = response.foodDetail.RoleGuid
+                    }
+                    else {
+
+                        var HataBilgisi = response.HataBilgisi;
+                        var Hatalar = '';
+                        if (HataBilgisi.Hata != null) {
+                            for (var i = 0; i < HataBilgisi.Hata.length; i++) {
+                                Hatalar += HataBilgisi.Hata[i] + '</br>';
+                            }
+                        }
+
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: HataBilgisi.HataAciklama,
+                            html: Hatalar
+                        })
+
+
+                    }
+                },
+                error: function (err) {
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: "HATA OLUŞTU. TEKRAR DENEYİNİZ.",
+                    })
+                }
+            });
+
+
+        });
+
+
+        $('#btnFoodDetail_Update').click(function () {
+
+            var foodDetail = {
+                Name: $('#txtFoodDetailName_Update').val(),
+                foodDetail: $('#ddlFoodDetailFoodCategory_Update').val(),
+                foodDetail: $('#ddlFoodDetailGuid_Update').val(),
+                Guid: $(this).attr('data-guid')
+            }
+
+
+            var formData = new FormData();
+            formData.append("Name", foodDetail.Name);
+            formData.append("FoodCategory", foodDetail.FoodCategory);
+            formData.append("Role", foodDetail.Role);
+            formData.append("Guid", foodDetail.Guid);
+
+
+            $.ajax({
+                url: '/Admin/UpdateFoodDetail',
+                type: 'POST',
+                data: formData,
+                cahce: false,
+                contentType: false,
+                processData: false,
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN", $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                success: function (response) {
+                    if (response.success) {
+
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Mağza Başarıyla Güncellendi',
+                            showConfirmButton: false,
+                            timer: 3000
+                        })
+                        setTimeout(function () { window.location.reload() }, 3000);
+
+                    }
+                    else {
+
+                        var HataBilgisi = response.HataBilgisi;
+                        var Hatalar = '';
+                        for (var i = 0; i < HataBilgisi.Hata.length; i++) {
+                            Hatalar += HataBilgisi.Hata[i] + '</br>';
+                        }
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: HataBilgisi.HataAciklama,
+                            html: Hatalar
+                        })
+
+
+                    }
+                },
+                error: function (err) {
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: "HATA OLUŞTU. TEKRAR DENEYİNİZ.",
+                    })
+                }
+            });
+
+        });
+
+
+        $('.btnRemoveFoodDetail').click(function () {
+            var foodDetailGuid = $(this).attr('data-guid');
+
+            Swal.fire({
+                title: 'UYARI!',
+                text: "'Mağzayı Silmek İstediğinizden Emin misiniz?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Evet!',
+                cancelButtonText: 'Hayır',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '/Admin/RemoveFoodDetail/' + foodDetailGuid,
+                        type: 'post',
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader("XSRF-TOKEN", $('input:hidden[name="__RequestVerificationToken"]').val());
+                        },
+                        success: function (response) {
+                            if (response.success) {
+
+                                Swal.fire({
+                                    position: 'top-end',
+                                    icon: 'success',
+                                    title: 'Ürün Başarıyla Silindi',
+                                    showConfirmButton: false,
+                                    timer: 3000
+                                })
+                                setTimeout(function () { window.location.reload() }, 3000);
+
+                            }
+                            else {
+
+                                var HataBilgisi = response.HataBilgisi;
+                                var Hatalar = '';
+                                for (var i = 0; i < HataBilgisi.Hata.length; i++) {
+                                    Hatalar += HataBilgisi.Hata[i] + '</br>';
+                                }
+
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: HataBilgisi.HataAciklama,
+                                    html: Hatalar
+                                })
+
+
+                            }
+                        },
+                        error: function (err) {
+
+                            Swal.fire({
+                                icon: 'error',
+                                title: "HATA OLUŞTU. TEKRAR DENEYİNİZ.",
+                            })
+                        }
+                    });
+                }
+            })
+        });
+
+    })
+
+</script>

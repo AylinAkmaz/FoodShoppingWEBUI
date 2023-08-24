@@ -1,0 +1,30 @@
+﻿{
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+        "applicationUrl": "http://localhost:14492",
+       // "sslPort": 44371,
+        "sslPort": 0
+    }
+  },
+  "profiles": {
+    "FoodShoppingWEBUI.WEBUI": {
+        "commandName": "Project",
+        "dotnetRunMessages": true,
+        "launchBrowser": true,
+        //"applicationUrl": "https://localhost:7034;http://localhost:5134",
+        "applicationUrl": "http://localhost:5134",
+        "environmentVariables": {
+            "ASPNETCORE_ENVIRONMENT": "Development"
+        }
+    },
+    "IIS Express": {
+      "commandName": "IISExpress",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}

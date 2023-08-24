@@ -1,0 +1,420 @@
+﻿@using FoodShoppingWEBUI.Core.ViewModel;
+@model StoreDetailViewModel
+@{
+    ViewData["Title"] = "Market Alt Karegorileri";
+    Layout = "~/Areas/AdminPanel/Views/_Layout.cshtml";
+}
+
+@Html.AntiForgeryToken()
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Market Detayları</h3>
+        <div class="card-tools">
+            <button type="button" class="btn btn-block btn-warning" data-toggle="modal" data-target="#modal-GetStoreCategories">Kategoriler</button>
+            <button type="button" class="btn btn-block btn-info" data-toggle="modal" data-target="#modal-NewStoreDetail">Ekle</button>
+
+
+        </div>
+    </div>
+    <div class="card-body">
+        <table id="tblStoreDetail" class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th style="width: 10px">#</th>
+                    <th>Market Detay Adı</th>
+                    <th>Kategoriler</th>
+                    <th style="width:20%"></th>
+
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    for (int i = 0; i < Model.StoreDetails.Count(); i++)
+                    {
+                        <tr>
+                            <td>@Convert.ToInt32(i+1)</td>
+                            <td>@Model.StoreDetails[i].Name</td>
+                            <td>@Model.StoreDetails[i].StoreCategoryName</td>
+                            <td>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-info btnStoreDetail" data-guid=@Model.StoreDetails[i].Guid data-toggle="modal" data-target="#modal-DetayStoreDetail">Güncelle</button>
+                                    <button type="button" class="btn btn-danger btnStoreDetailSil" data-guid=@Model.StoreDetails[i].Guid>Sil</button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+
+
+
+
+            </tbody>
+        </table>
+
+      @*@await Component.InvokeAsync("StoreDetails",Model)*@
+
+
+
+    </div>
+
+</div>
+<div class="modal fade" id="modal-GetStoreCategories">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Kategoriler</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                @await Component.InvokeAsync("StoreCategories",@Model.StoreCategories)
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Kapat</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+
+
+<div class="modal fade" id="modal-NewStoreDetail">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Market Detay Ekle</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="txtStoreDetailName_Add">Market Detay Adı</label>
+                    <input type="text" class="form-control" id="txtStoreDetailName_Add">
+                </div>
+               
+                <div class="form-group">
+                    <label for="ddlStoreDetailStoreCategory">Kategorisi</label>
+                    <select class="custom-select rounded-0" id="ddlStoreDetailStoreCategory">
+                        @{
+                            for (int i = 0; i < Model.StoreCategories.Count; i++)
+                            {
+                                <option value=@Model.StoreCategories[i].Guid>@Model.StoreCategories[i].Name</option>
+                            }
+                        }
+
+
+
+                    </select>
+                </div>
+               
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Kapat</button>
+                <button type="button" class="btn btn-primary" id="btnStoreDetail_Add">Kaydet</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<div class="modal fade" id="modal-StoreDetailUpdate">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Market detayını Güncelle</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="txtStoreDetailName_Update">Market Detay Adı</label>
+                    <input type="text" class="form-control" id="txtStoreDetailName_Update">
+                </div>
+                
+                <div class="form-group">
+                    <label for="ddlStoreDetailStoreCategory">Ana Kategorisi</label>
+                    <select class="custom-select rounded-0" id="ddlStoreDetailStoreCategory_Update">
+                        @{
+                            for (int i = 0; i < Model.StoreCategories.Count; i++)
+                            {
+                                <option value=@Model.StoreCategories[i].Guid>@Model.StoreCategories[i].Name</option>
+                            }
+                        }
+
+
+
+                    </select>
+                </div>
+                
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Kapat</button>
+                <button type="button" class="btn btn-primary" id="btnStoreDetail_Update">Kaydet</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+
+
+<script>
+    $(function () {
+        $("#tblStoreDetail").DataTable({
+            "responsive": true,
+            "lengthChange": false,
+            "autoWidth": false,
+            "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+        }).buttons().container().appendTo('#tblStoreDetail_wrapper .col-md-6:eq(0)');
+
+        $('#btnStoreDetail_Add').click(function () {
+
+            var storeDetail = {
+                Name: $('#txtStoreDetailName_Add').val(),
+                StoreCategoryGuid: $('#ddlStoreDetailStoreCategory').val(),
+            }
+
+
+            var formData = new FormData();
+            formData.append("Name", storeDetail.Name);
+            formData.append("StoreCategoryGuid", storeDetail.StoreCategoryGuid);
+
+
+            $.ajax({
+                url: '/Admin/AddStoreDetail',
+                type: 'POST',
+                data: formData,
+                cahce: false,
+                contentType: false,
+                processData: false,
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN", $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                success: function (response) {
+                    if (response.success) {
+
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Market Detayı Başarıyla Eklendi',
+                            showConfirmButton: false,
+                            timer: 3000
+                        })
+                        setTimeout(function () { window.location.reload() }, 3000);
+
+                    }
+                    else {
+
+                        var HataBilgisi = response.HataBilgisi;
+                        var Hatalar = '';
+                        for (var i = 0; i < HataBilgisi.Hata.length; i++) {
+                            Hatalar += HataBilgisi.Hata[i] + '</br>';
+                        }
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: HataBilgisi.HataAciklama,
+                            html: Hatalar
+                        })
+
+
+                    }
+                },
+                error: function (err) {
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: "HATA OLUŞTU. TEKRAR DENEYİNİZ.",
+                    })
+                }
+            });
+
+        });
+
+        $('.btnStoreDetail').click(function () {
+            var guid = $(this).attr('data-guid');
+            $.ajax({
+                url: '/Admin/StoreDetail/' + guid,
+                type: 'get',
+                success: function (response) {
+                    if (response.success) {
+
+                        $('#txtStoreDetailName_Update').val(response.storeDetail.Name);
+
+                        $('#btnStoreDetail_Update').attr('data-guid', guid)
+
+                        const select = document.querySelector('#ddlStoreDetailStoreCategory_Update')
+                        select.value = response.storeDetail.StoreCategoryGuid
+                    }
+                    else {
+
+                        var HataBilgisi = response.HataBilgisi;
+                        var Hatalar = '';
+                        if (HataBilgisi.Hata != null) {
+                            for (var i = 0; i < HataBilgisi.Hata.length; i++) {
+                                Hatalar += HataBilgisi.Hata[i] + '</br>';
+                            }
+                        }
+
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: HataBilgisi.HataAciklama,
+                            html: Hatalar
+                        })
+
+
+                    }
+                },
+                error: function (err) {
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: "HATA OLUŞTU. TEKRAR DENEYİNİZ.",
+                    })
+                }
+            });
+
+
+        });
+
+
+        $('#btnStoreDetail_Update').click(function () {
+
+            var storeDetail = {
+                Name: $('#txtStoreDetailName_Update').val(),
+                StoreCategory: $('#ddlStoreDetailStoreCategory_Update').val(),
+                Guid: $(this).attr('data-guid')
+            }
+
+
+            var formData = new FormData();
+            formData.append("Name", storeDetail.Name);
+            formData.append("StoreCategory", storeDetail.StoreCategory);
+            formData.append("Guid", storeDetail.Guid);
+
+
+            $.ajax({
+                url: '/Admin/UpdateStoreDetail',
+                type: 'POST',
+                data: formData,
+                cahce: false,
+                contentType: false,
+                processData: false,
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN", $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                success: function (response) {
+                    if (response.success) {
+
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Market Detayı Başarıyla Güncellendi',
+                            showConfirmButton: false,
+                            timer: 3000
+                        })
+                        setTimeout(function () { window.location.reload() }, 3000);
+
+                    }
+                    else {
+
+                        var HataBilgisi = response.HataBilgisi;
+                        var Hatalar = '';
+                        for (var i = 0; i < HataBilgisi.Hata.length; i++) {
+                            Hatalar += HataBilgisi.Hata[i] + '</br>';
+                        }
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: HataBilgisi.HataAciklama,
+                            html: Hatalar
+                        })
+
+
+                    }
+                },
+                error: function (err) {
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: "HATA OLUŞTU. TEKRAR DENEYİNİZ.",
+                    })
+                }
+            });
+
+        });
+
+
+        $('.btnRemoveStoreDetail').click(function () {
+            var storeDetailGuid = $(this).attr('data-guid');
+
+            Swal.fire({
+                title: 'UYARI!',
+                text: "'Market Detayını Silmek İstediğinizden Emin misiniz?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Evet!',
+                cancelButtonText: 'Hayır',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '/Admin/RemoveStoreDetail/' + storeDetailGuid,
+                        type: 'post',
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader("XSRF-TOKEN", $('input:hidden[name="__RequestVerificationToken"]').val());
+                        },
+                        success: function (response) {
+                            if (response.success) {
+
+                                Swal.fire({
+                                    position: 'top-end',
+                                    icon: 'success',
+                                    title: 'Ürün Başarıyla Silindi',
+                                    showConfirmButton: false,
+                                    timer: 3000
+                                })
+                                setTimeout(function () { window.location.reload() }, 3000);
+
+                            }
+                            else {
+
+                                var HataBilgisi = response.HataBilgisi;
+                                var Hatalar = '';
+                                for (var i = 0; i < HataBilgisi.Hata.length; i++) {
+                                    Hatalar += HataBilgisi.Hata[i] + '</br>';
+                                }
+
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: HataBilgisi.HataAciklama,
+                                    html: Hatalar
+                                })
+
+
+                            }
+                        },
+                        error: function (err) {
+
+                            Swal.fire({
+                                icon: 'error',
+                                title: "HATA OLUŞTU. TEKRAR DENEYİNİZ.",
+                            })
+                        }
+                    });
+                }
+            })
+        });
+
+    })
+
+</script>

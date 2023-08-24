@@ -1,0 +1,83 @@
+﻿@using FoodShoppingWEBUI.Core.DTO;
+@model List<FoodProductDTO>
+@{
+    ViewData["Title"] = "FoodProduct";
+    Layout = "~/Areas/AdminPanel/Views/_Layout.cshtml";
+}
+
+@Html.AntiForgeryToken()
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Yemek Ürünleri</h3>
+        <div class="card-tools">
+            <button type="button" class="btn btn-block btn-info" data-toggle="modal" data-target="#modal-YeniYemekÜrünü">Ekle</button>
+
+        </div>
+    </div>
+    <div class="card-body">
+
+        @await Component.InvokeAsync("FoodProduct",Model)
+
+
+
+    </div>
+
+</div>
+
+<div class="modal fade" id="modal-YeniYemekÜrünü">
+    <div class="modal-dialog modal-YeniYemekÜrünü">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Yeni Yemek Ürünü </h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="txtFoodProduct_Add">Yemek Ürün Adı</label>
+                    <input type="text" class="form-control" id="txtFoodProduct_Add">
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="txtFoodProductDescription_Add">Yemek Ürün Açıklaması</label>
+                    <input type="text" class="form-control" id="txtFoodProductDescription_Add">
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="txtFoodProductUnitPrice_Add">Yemek Ürün Fiyatı</label>
+                    <input type="text" class="form-control" id="txtFoodProductUnitPrice_Add">
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="txtFoodProductQuantity_Add">Yemek Ürün Miktarı</label>
+                    <input type="text" class="form-control" id="txtFoodProductQuantity_Add">
+                </div>
+            </div>
+         
+            <div class="form-group">
+                <label for="fuFoodProductFeaturedImage_Add">Öne Çıkan Görsel</label>
+                <div class="input-group">
+                    <div class="custom-file">
+                        <input type="file" class="custom-file-input" id="fuFoodProductFeaturedImage_Add">
+                        <label class="custom-file-label" for="fuFoodProductFeaturedImage_Add">Choose file</label>
+                    </div>
+
+                </div>
+            </div>
+
+
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Kapat</button>
+                <button type="button" class="btn btn-primary" id="btnAddFoodProduct">Kaydet</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+

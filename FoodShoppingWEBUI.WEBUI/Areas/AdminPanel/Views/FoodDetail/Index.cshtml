@@ -1,0 +1,485 @@
+﻿@using FoodShoppingWEBUI.Core.ViewModel;
+@model FoodDetailViewModel
+@{
+    ViewData["Title"] = "Yemek Mağzaları";
+    Layout = "~/Areas/AdminPanel/Views/_Layout.cshtml";
+}
+@Html.AntiForgeryToken()
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Yemek Mağzaları</h3>
+        <div class="card-tools">
+            <button type="button" class="btn btn-block btn-info" data-toggle="modal" data-target="#modal-NewFoodDetail">Ekle</button>
+            <button type="button" class="btn btn-block btn-warning" data-toggle="modal" data-target="#modal-GetFoodCategories">Kategoriler</button>
+            <button type="button" class="btn btn-block btn-warning" data-toggle="modal" data-target="#modal-GetRole">Roller</button>
+
+
+        </div>
+    </div>
+    <div class="card-body">
+        <table id="tblFoodDetail" class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th style="width: 10px">#</th>
+                    <th>Mağza Adı</th>
+                    <th>Kategoriler</th>
+                    <th>Roller</th>
+                    <th style="width:20%"></th>
+
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    for (int i = 0; i < Model.FoodDetails.Count(); i++)
+                    {
+                        <tr>
+                            <td>@Convert.ToInt32(i+1)</td>
+                            <td>@Model.FoodDetails[i].Name</td>
+                            <td>@Model.FoodDetails[i].FoodCategoryName</td>
+                            <td>@Model.FoodDetails[i].RoleName</td>
+                            <td>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-info btnFoodDetail" data-guid=@Model.FoodDetails[i].Guid data-toggle="modal" data-target="#modal-DetayFoodDetail">Güncelle</button>
+                                    <button type="button" class="btn btn-danger btnFoodDetailSil" data-guid=@Model.FoodDetails[i].Guid>Sil</button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+
+
+
+
+            </tbody>
+        </table>
+
+
+    </div>
+
+</div>
+<div class="modal fade" id="modal-GetFoodCategories">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Kategoriler</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+               <div class="form-group">
+                    <label for="ddlFoodDetailFoodCategory">Kategorisi</label>
+                    <select class="custom-select rounded-0" id="ddlFoodDetailFoodCategory">
+                        @{
+                            for (int i = 0; i < Model.FoodCategories.Count(); i++)
+                            {
+                                <option value=@Model.FoodCategories[i].Guid>@Model.FoodCategories[i].Name</option>
+                            }
+                        }
+
+
+
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Kapat</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal-GetRole">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Roller</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="ddlFoodDetailRole">Rol</label>
+                    <select class="custom-select rounded-0" id="ddlFoodDetailRole">
+                        @{
+                            for (int i = 0; i < Model.Roles.Count(); i++)
+                            {
+                                <option value=@Model.Roles[i].Guid>@Model.Roles[i].Name</option>
+                            }
+                        }
+
+
+
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Kapat</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="modal-NewFoodDetail">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Mağza Ekle</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="txtFoodDetailName_Add">Mağza Adı</label>
+                    <input type="text" class="form-control" id="txtFoodDetailName_Add">
+                </div>
+
+                <div class="form-group">
+                    <label for="ddlFoodDetailFoodCategory">Kategorisi</label>
+                    <select class="custom-select rounded-0" id="ddlFoodDetailFoodCategoryAdd">
+                        @{
+                            for (int i = 0; i < Model.FoodCategories.Count(); i++)
+                            {
+                                <option value=@Model.FoodCategories[i].Guid>@Model.FoodCategories[i].Name</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="ddlFoodDetailRole">Rolü</label>
+                    <select class="custom-select rounded-0" id="ddlFoodDetailRoleAdd">
+                        @{
+                            for (int i = 0; i < Model.Roles.Count(); i++)
+                            {
+                                <option value=@Model.Roles[i].Guid>@Model.Roles[i].Name</option>
+                            }
+                        }
+                </select>
+                </div>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Kapat</button>
+                <button type="button" class="btn btn-primary" id="btnFoodDetail_Add">Kaydet</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<div class="modal fade" id="modal-FoodDetailUpdate">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Mağzayı Güncelle</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="txtFoodDetailName_Update">Mağza Adı</label>
+                    <input type="text" class="form-control" id="txtFoodDetailName_Update">
+                </div>
+
+                <div class="form-group">
+                    <label for="ddlFoodDetailFoodCategory"> Kategorisi</label>
+                    <select class="custom-select rounded-0" id="ddlFoodDetailFoodCategory">
+                        @{
+                            for (int i = 0; i < Model.FoodCategories.Count; i++)
+                            {
+                                <option value=@Model.FoodCategories[i].Guid>@Model.FoodCategories[i].Name</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="ddlFoodDetailRole"> Rolü</label>
+                    <select class="custom-select rounded-0" id="ddlFoodDetailRole">
+                        @{
+                            for (int i = 0; i < Model.Roles.Count; i++)
+                            {
+                                <option value=@Model.Roles[i].Guid>@Model.Roles[i].Name</option>
+                            }
+                        }
+                    </select>
+                </div>
+
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Kapat</button>
+                <button type="button" class="btn btn-primary" id="btnFoodDetail_Update">Kaydet</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+
+
+<script>
+    $(function () {
+        $("#tblFoodDetail").DataTable({
+            "responsive": true,
+            "lengthChange": false,
+            "autoWidth": false,
+            "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+        }).buttons().container().appendTo('#tblFoodDetail_wrapper .col-md-6:eq(0)');
+
+        $('#btnFoodDetail_Add').click(function () {
+
+            var foodDetail = {
+                Name: $('#txtFoodDetailName_Add').val(),
+                FoodCategoryGuid: $('#ddlFoodDetailFoodCategoryAdd').val(),
+                RoleGuid: $('#ddlFoodDetailRoleAdd').val(),
+            }
+
+
+            var formData = new FormData();
+            formData.append("Name", foodDetail.Name);
+            formData.append("FoodCategoryGuid", foodDetail.FoodCategoryGuid);
+            formData.append("RoleGuid", foodDetail.RoleGuid);
+
+
+
+            $.ajax({
+                url: '/Admin/AddFoodDetail',
+                type: 'POST',
+                data: formData,
+                cahce: false,
+                contentType: false,
+                processData: false,
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN", $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                success: function (response) {
+                    if (response.success) {
+
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Mağza Başarıyla Eklendi',
+                            showConfirmButton: false,
+                            timer: 3000
+                        })
+                        setTimeout(function () { window.location.reload() }, 3000);
+
+                    }
+                    else {
+
+                        var HataBilgisi = response.HataBilgisi;
+                        var Hatalar = '';
+                        for (var i = 0; i < HataBilgisi.Hata.length; i++) {
+                            Hatalar += HataBilgisi.Hata[i] + '</br>';
+                        }
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: HataBilgisi.HataAciklama,
+                            html: Hatalar
+                        })
+
+
+                    }
+                },
+                error: function (err) {
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: "HATA OLUŞTU. TEKRAR DENEYİNİZ.",
+                    })
+                }
+            });
+
+        });
+
+        $('.btnFoodDetail').click(function () {
+            var guid = $(this).attr('data-guid');
+            $.ajax({
+                url: '/Admin/FoodDetail/' + guid,
+                type: 'get',
+                success: function (response) {
+                    if (response.success) {
+
+                        $('#txtFoodDetailName_Update').val(response.storeDetail.Name);
+
+                        $('#btnFoodDetail_Update').attr('data-guid', guid)
+
+                        const select = document.querySelector('#ddlFoodDetailFoodCategory_Update')
+                        select.value = response.foodDetail.FoodCategoryGuid
+                        const select = document.querySelector('#ddlFoodDetailRole_Update')
+                        select.value = response.foodDetail.RoleGuid
+                    }
+                    else {
+
+                        var HataBilgisi = response.HataBilgisi;
+                        var Hatalar = '';
+                        if (HataBilgisi.Hata != null) {
+                            for (var i = 0; i < HataBilgisi.Hata.length; i++) {
+                                Hatalar += HataBilgisi.Hata[i] + '</br>';
+                            }
+                        }
+
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: HataBilgisi.HataAciklama,
+                            html: Hatalar
+                        })
+
+
+                    }
+                },
+                error: function (err) {
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: "HATA OLUŞTU. TEKRAR DENEYİNİZ.",
+                    })
+                }
+            });
+
+
+        });
+
+
+        $('#btnFoodDetail_Update').click(function () {
+
+            var foodDetail = {
+                Name: $('#txtFoodDetailName_Update').val(),
+                foodDetail: $('#ddlFoodDetailFoodCategory_Update').val(),
+                foodDetail: $('#ddlFoodDetailGuid_Update').val(),
+                Guid: $(this).attr('data-guid')
+            }
+
+
+            var formData = new FormData();
+            formData.append("Name", foodDetail.Name);
+            formData.append("FoodCategory", foodDetail.FoodCategory);
+            formData.append("Role", foodDetail.Role);
+            formData.append("Guid", foodDetail.Guid);
+
+
+            $.ajax({
+                url: '/Admin/UpdateFoodDetail',
+                type: 'POST',
+                data: formData,
+                cahce: false,
+                contentType: false,
+                processData: false,
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN", $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                success: function (response) {
+                    if (response.success) {
+
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Mağza Başarıyla Güncellendi',
+                            showConfirmButton: false,
+                            timer: 3000
+                        })
+                        setTimeout(function () { window.location.reload() }, 3000);
+
+                    }
+                    else {
+
+                        var HataBilgisi = response.HataBilgisi;
+                        var Hatalar = '';
+                        for (var i = 0; i < HataBilgisi.Hata.length; i++) {
+                            Hatalar += HataBilgisi.Hata[i] + '</br>';
+                        }
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: HataBilgisi.HataAciklama,
+                            html: Hatalar
+                        })
+
+
+                    }
+                },
+                error: function (err) {
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: "HATA OLUŞTU. TEKRAR DENEYİNİZ.",
+                    })
+                }
+            });
+
+        });
+
+
+        $('.btnRemoveFoodDetail').click(function () {
+            var foodDetailGuid = $(this).attr('data-guid');
+
+            Swal.fire({
+                title: 'UYARI!',
+                text: "'Mağzayı Silmek İstediğinizden Emin misiniz?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Evet!',
+                cancelButtonText: 'Hayır',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '/Admin/RemoveFoodDetail/' + foodDetailGuid,
+                        type: 'post',
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader("XSRF-TOKEN", $('input:hidden[name="__RequestVerificationToken"]').val());
+                        },
+                        success: function (response) {
+                            if (response.success) {
+
+                                Swal.fire({
+                                    position: 'top-end',
+                                    icon: 'success',
+                                    title: 'Ürün Başarıyla Silindi',
+                                    showConfirmButton: false,
+                                    timer: 3000
+                                })
+                                setTimeout(function () { window.location.reload() }, 3000);
+
+                            }
+                            else {
+
+                                var HataBilgisi = response.HataBilgisi;
+                                var Hatalar = '';
+                                for (var i = 0; i < HataBilgisi.Hata.length; i++) {
+                                    Hatalar += HataBilgisi.Hata[i] + '</br>';
+                                }
+
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: HataBilgisi.HataAciklama,
+                                    html: Hatalar
+                                })
+
+
+                            }
+                        },
+                        error: function (err) {
+
+                            Swal.fire({
+                                icon: 'error',
+                                title: "HATA OLUŞTU. TEKRAR DENEYİNİZ.",
+                            })
+                        }
+                    });
+                }
+            })
+        });
+
+    })
+
+</script>
+
+

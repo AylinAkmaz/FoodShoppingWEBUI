@@ -1,0 +1,204 @@
+﻿@using FoodShoppingWEBUI.Core.ViewModel;
+@model CategoryViewModel
+@{
+    ViewData["Title"] = "Kategory";
+    Layout = "~/Areas/AdminPanel/Views/_Layout.cshtml";
+}
+
+@Html.AntiForgeryToken()
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Yemek Bölümü</h3>
+        <div class="card-tools">
+            <button type="button" class="btn btn-block btn-warning" data-toggle="modal" data-target="#modal-FoodCategories">Kategoriler</button>
+            <button type="button" class="btn btn-block btn-info" data-toggle="modal" data-target="#modal-NewCategory">Ekle</button>
+
+
+        </div>
+    </div>
+    <div class="card-body">
+
+        <table id="tblCategory" class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th style="width: 10px">#</th>
+                    <th>Bölüm Adı</th>
+                    <th>Yemek Kategoriler</th>
+                    <th style="width:20%"></th>
+
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    for (int i = 0; i < Model.Categories.Count; i++)
+                    {
+                        <tr>
+                            <td>@Convert.ToInt32(i+1)</td>
+                            <td>@Model.Categories[i].Name</td>
+                            <td>@Model.FoodCategories[i].Name</td>
+                            <td>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-info btnCategoriesDetail" data-guid=@Model.Categories[i].Guid data-toggle="modal" data-target="#modal-DetayCategories">Güncelle</button>
+                                    <button type="button" class="btn btn-danger btnCategoriesSil" data-guid=@Model.Categories[i].Guid>Sil</button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+
+
+
+
+            </tbody>
+        </table>
+
+
+    </div>
+
+</div>
+
+<div class="modal fade" id="modal-FoodCategories">
+    <div class="modal-dialog modal-NewCategory">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Yemek Kategorileri</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                @await Component.InvokeAsync("FoodCategories",Model.FoodCategories)
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Kapat</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<div class="modal fade" id="modal-NewCategory">
+    <div class="modal-dialog modal-NewCategory">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Yeni Yemek Bölümü</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="txtCategoriesName_Add">Yemek Bölümü Adı</label>
+                    <input type="text" class="form-control" id="txtCategoriesName_Add">
+                </div>
+
+
+                <div class="form-group">
+                    <label for="ddlCategoriesFoodCategory_Add">Kategoriler</label>
+                    <select class="custom-select rounded-0" id="ddlCategoriesFoodCategory_Add">
+                        @{
+                            for (int i = 0; i < Model.FoodCategories.Count; i++)
+                            {
+                                <option value="@Model.FoodCategories[i].Guid">@Model.FoodCategories[i].Name</option>
+                            }
+                        }
+
+
+                    </select>
+                </div>
+
+
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Kapat</button>
+                <button type="button" class="btn btn-primary" id="btnAddCategory">Kaydet</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+
+
+<script>
+    $(function () {
+        $("#tblCategory").DataTable({
+            "responsive": true,
+            "lengthChange": false,
+            "autoWidth": false,
+            "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+        }).buttons().container().appendTo('#tblCategory_wrapper .col-md-6:eq(0)');
+     
+        $('#btnAddCategory').click(function () {
+
+            var categories = {
+                Name: $('#txtCategoriesName_Add').val(),
+                FoodCategoryGuid: $('#ddlCategoriesFoodCategory_Add').val(),
+            }
+
+
+            var formData = new FormData();
+            formData.append("Name", categories.Name);
+            formData.append("FoodCategoryGuid", categories.FoodCategoryGuid);
+
+
+            $.ajax({
+                url: '/Admin/AddCategory',
+                type: 'POST',
+                data: formData,
+                cahce: false,
+                contentType: false,
+                processData: false,
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN", $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                success: function (response) {
+                    if (response.success) {
+
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Yemek Bölümü Başarıyla Eklendi',
+                            showConfirmButton: false,
+                            timer: 3000
+                        })
+                        setTimeout(function () { window.location.reload() }, 3000);
+
+                    }
+                    else {
+
+                        var HataBilgisi = response.HataBilgisi;
+                        var Hatalar = '';
+                        for (var i = 0; i < HataBilgisi.Hata.length; i++) {
+                            Hatalar += HataBilgisi.Hata[i] + '</br>';
+                        }
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: HataBilgisi.HataAciklama,
+                            html: Hatalar
+                        })
+
+
+                    }
+                },
+                error: function (err) {
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: "HATA OLUŞTU. TEKRAR DENEYİNİZ.",
+                    })
+                }
+            });
+
+        });
+
+
+
+
+    })
+
+</script>
+
+

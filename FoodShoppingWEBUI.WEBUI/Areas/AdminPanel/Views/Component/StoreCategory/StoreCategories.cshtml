@@ -1,0 +1,338 @@
+﻿@using FoodShoppingWEBUI.Core.DTO;
+@model List<StoreCategoryDTO>
+
+
+<table id="tblMarketKategoriler" class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th style="width: 10px">#</th>
+            <th>Market Kategori</th>
+            <th style="width:20%"></th>
+
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            for (int i = 0; i < Model.Count; i++)
+            {
+                <tr>
+                    <td>@Convert.ToInt32(i+1)</td>
+                    <td>@Model[i].Name</td>
+                    <td>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-info btnStoreCategoryDetail" data-guid=@Model[i].Guid data-toggle="modal" data-target="#modal-DetayMarketKategori">Güncelle</button>
+                            <button type="button" class="btn btn-danger btnMarketKategoriSil" data-guid=@Model[i].Guid >Sil</button>
+                        </div>
+                    </td>
+                </tr>
+            }
+        }
+
+
+
+    </tbody>
+</table>
+
+<div class="modal fade" id="modal-DetayMarketKategori">
+    <div class="modal-dialog modal-DetayMarketKategori">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Kategori Güncelle</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="txtMarketKategoriAd_Update">Kategori Adı</label>
+                    <input type="text" class="form-control" id="txtMarketKategoriAd_Update">
+                </div>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Kapat</button>
+                <button type="button" class="btn btn-primary" id="btnUpdateKategori">Kaydet</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<script>
+    $(function () {
+        $("#tblMarketKategoriler").DataTable({
+            "responsive": true,
+            "lengthChange": false,
+            "autoWidth": false,
+            "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+        }).buttons().container().appendTo('#tblMarketKategoriler_wrapper .col-md-6:eq(0)');
+
+        $(document).on('click', '.btnStoreCategoryDetail', function () {
+            $('#txtMarketKategoriAd_Update').val('');
+            var guid = $(this).attr('data-guid');
+            $.ajax({
+                url: '/Admin/MarketKategori/' + guid,
+                type: 'get',
+                success: function (response) {
+                    if (response.success) {
+                       
+                        $('#modal-DetayMarketKategori').modal('show');
+
+                        $('#btnUpdateKategori').attr('data-guid', guid)
+
+                        $('#txtMarketKategoriAd_Update').val(response.data.Name);
+
+                    }
+                    else {
+
+                        var HataBilgisi = response.HataBilgisi;
+                        var Hatalar = '';
+                        if (HataBilgisi.Hata != null) {
+                            for (var i = 0; i < HataBilgisi.Hata.length; i++) {
+                                Hatalar += HataBilgisi.Hata[i] + '</br>';
+                            }
+                        }
+
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: HataBilgisi.HataAciklama,
+                            html: Hatalar
+                        })
+
+
+                    }
+                },
+                error: function (err) {
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: "HATA OLUŞTU. TEKRAR DENEYİNİZ.",
+                    })
+                }
+            });
+        });
+
+        $('#btnAddMarketKategori').click(function () {
+
+            var storeCategory = new Object();
+
+            storeCategory.Name = $('#txtStoreCategoryAd_Add').val();
+
+            $.ajax({
+                url: '/Admin/AddStoreCategory',
+                type: 'POST',
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN", $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                data: { storeCategory },
+                success: function (response) {
+                    if (response.success) {
+
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Kategori Başarıyla Eklendi',
+                            showConfirmButton: false,
+                            timer: 3000
+                        })
+                        setTimeout(function () { window.location.reload() }, 3000);
+
+                    }
+                    else {
+
+                        var HataBilgisi = response.HataBilgisi;
+                        var Hatalar = '';
+                        for (var i = 0; i < HataBilgisi.Hata.length; i++) {
+                            Hatalar += HataBilgisi.Hata[i] + '</br>';
+                        }
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: HataBilgisi.HataAciklama,
+                            html: Hatalar
+                        })
+
+
+                    }
+                },
+                error: function (err) {
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: "HATA OLUŞTU. TEKRAR DENEYİNİZ.",
+                    })
+                }
+            });
+
+        });
+
+        $('.btnStoreCategoryDetail').click(function () {
+            $('#txtMarketKategoriAd_Update').val('');
+            var guid = $(this).attr('data-guid');
+            $.ajax({
+                url: '/Admin/StoreCategory/' + guid,
+                type: 'get',
+                success: function (response) {
+                    if (response.success) {
+
+
+                        $('#btnUpdateKategori').attr('data-guid', guid)
+
+                        $('#txtMarketKategoriAd_Update').val(response.data.Name);
+
+                    }
+                    else {
+
+                        var HataBilgisi = response.HataBilgisi;
+                        var Hatalar = '';
+                        if (HataBilgisi.Hata != null) {
+                            for (var i = 0; i < HataBilgisi.Hata.length; i++) {
+                                Hatalar += HataBilgisi.Hata[i] + '</br>';
+                            }
+                        }
+
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: HataBilgisi.HataAciklama,
+                            html: Hatalar
+                        })
+
+
+                    }
+                },
+                error: function (err) {
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: "HATA OLUŞTU. TEKRAR DENEYİNİZ.",
+                    })
+                }
+            });
+
+
+        });
+
+
+
+
+        $('#btnUpdateKategori').click(function () {
+            var storeCategory = new Object();
+
+            storeCategory.Name = $('#txtMarketKategoriAd_Update').val();
+            storeCategory.Guid = $(this).attr('data-guid');
+
+            $.ajax({
+                url: '/Admin/UpdateStoreCategory',
+                type: 'post',
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN", $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                data: { storeCategory },
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Kategori Başarıyla Güncellendi',
+                            showConfirmButton: false,
+                            timer: 3000
+                        })
+                        setTimeout(function () { window.location.reload() }, 3000);
+
+                    }
+                    else {
+
+                        var HataBilgisi = response.HataBilgisi;
+                        var Hatalar = '';
+                        for (var i = 0; i < HataBilgisi.Hata.length; i++) {
+                            Hatalar += HataBilgisi.Hata[i] + '</br>';
+                        }
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: HataBilgisi.HataAciklama,
+                            html: Hatalar
+                        })
+
+
+                    }
+                },
+                error: function (err) {
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: "HATA OLUŞTU. TEKRAR DENEYİNİZ.",
+                    })
+                }
+            });
+
+        });
+
+
+        $('.btnMarketKategoriSil').click(function () {
+            var storeCategoryGUID = $(this).attr('data-guid');
+
+            Swal.fire({
+                title: 'UYARI!',
+                text: "'Kategoriyi Silmek İstediğinizden Emin misiniz?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Evet!',
+                cancelButtonText: 'Hayır',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '/Admin/RemoveStoreCategory/' + storeCategoryGUID,
+                        type: 'post',
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader("XSRF-TOKEN", $('input:hidden[name="__RequestVerificationToken"]').val());
+                        },
+                        success: function (response) {
+                            if (response.success) {
+
+                                Swal.fire({
+                                    position: 'top-end',
+                                    icon: 'success',
+                                    title: 'Kategori Başarıyla Silindi',
+                                    showConfirmButton: false,
+                                    timer: 3000
+                                })
+                                setTimeout(function () { window.location.reload() }, 3000);
+
+                            }
+                            else {
+
+                                var HataBilgisi = response.HataBilgisi;
+                                var Hatalar = '';
+                                for (var i = 0; i < HataBilgisi.Hata.length; i++) {
+                                    Hatalar += HataBilgisi.Hata[i] + '</br>';
+                                }
+
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: HataBilgisi.HataAciklama,
+                                    html: Hatalar
+                                })
+
+
+                            }
+                        },
+                        error: function (err) {
+
+                            Swal.fire({
+                                icon: 'error',
+                                title: "HATA OLUŞTU. TEKRAR DENEYİNİZ.",
+                            })
+                        }
+                    });
+                }
+            })
+        });
+
+    })
+
+</script>

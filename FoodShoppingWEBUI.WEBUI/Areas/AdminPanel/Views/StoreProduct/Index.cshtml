@@ -1,0 +1,460 @@
+﻿@using FoodShoppingWEBUI.Core.DTO;
+@using FoodShoppingWEBUI.Core.ViewModel;
+@model StoreProductViewModel
+@{
+    ViewData["Title"] = "Market Ürünleri";
+    Layout = "~/Areas/AdminPanel/Views/_Layout.cshtml";
+}
+
+@Html.AntiForgeryToken()
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Market Ürünleri</h3>
+        <div class="card-tools">
+            <button type="button" class="btn btn-block btn-warning" data-toggle="modal" data-target="#modal-StoreDetail">Market Kategorisi</button>
+            <button type="button" class="btn btn-block btn-info" data-toggle="modal" data-target="#modal-NewStoreProduct">Ekle</button>
+
+        </div>
+    </div>
+   <div class="card-body">
+       <table id="tblMarketÜrünleri" class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th style="width: 10px">#</th>
+            <th>Market Ürün Adı</th>
+            <th>Market Ürün Resmi</th>
+            <th>Ürün Kategorisi</th>
+            <th>Birim Fiyatı</th>
+            <th style="width:20%"></th>
+
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            for (int i = 0; i <@Model.StoreProducts.Count(); i++)
+            {
+                string storeProductImagePath = "/MediaUpload/" + @Model.StoreProducts[i].FeaturedImage;
+                <tr>
+                    <td>@Convert.ToInt32(i+1)</td>
+                    <td>
+                        <a href="@storeProductImagePath" data-toggle="lightbox" data-title="@Model.StoreProducts[i].Name">
+                            <img src="@storeProductImagePath" class="img-fluid mb-2" alt="@Model.StoreProducts[i].Name" width="100" />
+                        </a>
+
+                    <td> @Model.StoreProducts[i].Name</td>
+                    <td> @Model.StoreProducts[i].StoreDetailName</td>
+                    <td> @Model.StoreProducts[i].UnitPrice</td>
+                    <td></td>
+                    <td>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-info btnMarketÜrünDetay" data-guid=@Model.StoreProducts[i].Guid data-toggle="modal" data-target="#modal-DetayMarketÜrünü">Güncelle</button>
+                            <button type="button" class="btn btn-danger btnMarketÜrünSil" data-guid=@Model.StoreProducts[i].Guid>Sil</button>
+                        </div>
+                    </td>
+                </tr>
+            }
+        }
+
+
+
+    </tbody>
+</table>
+      @*  @await Component.InvokeAsync("StoreProducts",Model)*@
+
+    </div>
+
+</div>
+
+<div class="modal fade" id="modal-StoreDetail">
+    <div class="modal-dialog modal-NewStoreProduct">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Detay Kategoriler</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                @await Component.InvokeAsync("StoreDetails",@Model.StoreDetails)
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Kapat</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+
+
+<div class="modal fade" id="modal-NewStoreProduct">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Yeni Market Ürünü</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="txtMarketÜrünAd_Add">Market Ürünü Adı</label>
+                    <input type="text" class="form-control" id="txtMarketÜrünAd_Add">
+                </div>
+                
+                <div class="form-group">
+                    <label for="txtMarketÜrünAd_Add">Birim Fiyatı</label>
+                    <input type="text" class="form-control" id="txtMarketÜrünüUnitPrice_Add">
+                </div>
+                <div class="form-group">
+                    <label for="ddlStoreProductStoreDetail">Market Alt Kategorisi</label>
+                    <select class="custom-select rounded-0" id="ddlStoreProductStoreDetail">
+                        @{
+                            for (int i = 0; i < Model.StoreDetails.Count; i++)
+                            {
+                                    <option value=@Model.StoreDetails[i].Guid>@Model.StoreDetails[i].Name</option>
+                            }
+                        }
+
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="fuMarketÜrünüFeaturedImage">Öne Çıkan Görsel</label>
+                    <div class="input-group">
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input" id="fuMarketÜrünüFeaturedImage_Add">
+                            <label class="custom-file-label" for="fuMarketÜrünüFeaturedImage_Add">Dosya Seç</label>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="txtMarketÜrünDescription_Add">Market Ürün Açıklaması</label>
+                    <textarea class="form-control" rows="5" id="txtMarketÜrünDescription_Add"></textarea>
+                </div>
+
+
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Kapat</button>
+                <button type="button" class="btn btn-primary" id="btnAddMarketÜrün">Kaydet</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<div class="modal fade" id="modal-DetayMarketÜrünü">
+    <div class="modal-dialog modal-DetayMarketÜrünü">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Market Ürünü Güncelle</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="txtMarketÜrünAd_Add">Market Ürün Adı</label>
+                    <input type="text" class="form-control" id="txtMarketÜrünAd_Update">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="txtMarketÜrünAd_Add">Birim Fiyatı</label>
+                <input type="text" class="form-control" id="txtMarketÜrünüUnitPrice_Add">
+            </div>
+              <div class="form-group">
+                    <label for="ddlStoreProductStoreDetail">Market Alt Kategorisi</label>
+                    <select class="custom-select rounded-0" id="ddlStoreProductStoreDetail">
+                        @{
+                            for (int i = 0; i < Model.StoreDetails.Count; i++)
+                            {
+                                    <option value=@Model.StoreDetails[i].Guid>@Model.StoreDetails[i].Name</option>
+                            }
+                        }
+
+                    </select>
+                </div>
+
+
+            <div class="form-group">
+                <label for="fuMarketÜrünüFeaturedImage">Öne Çıkan Görsel</label>
+                <div class="input-group">
+                    <div class="custom-file">
+                        <input type="file" class="custom-file-input" id="fuMarketÜrünüFeaturedImage_Add">
+                        <label class="custom-file-label" for="fuMarketÜrünüFeaturedImage_Add">Choose file</label>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="txtMarketÜrünDescription_Add">Market Ürün Açıklaması</label>
+                <textarea class="form-control" rows="5" id="txtMarketÜrünDescription_Add"></textarea>
+            </div>
+
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Kapat</button>
+                <button type="button" class="btn btn-primary" id="btnUpdateMarketÜrünü">Kaydet</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+
+
+<script>
+    $(function () {
+        $("#tblMarketÜrünleri").DataTable({
+            "responsive": true,
+            "lengthChange": false,
+            "autoWidth": false,
+            "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+        }).buttons().container().appendTo('#tblMarketÜrünleri_wrapper .col-md-6:eq(0)');
+
+        $('#btnAddMarketÜrün').click(function () {
+
+            var storeProduct = {
+
+             Name = $('#txtMarketÜrünAd_Add').val(),
+             Description = $('#txtMarketÜrünDescription_Add').val(),
+             UnitPrice = $('#txtMarketÜrünüUnitPrice_Add').val(),
+             StoreDetailGuid = $('#ddlStoreProductStoreDetail').val(),
+             
+            }
+            var files = $('#fuMarketÜrünüFeaturedImage_Add').prop('files');
+
+             var formData = new FormData();
+            formData.append("Name", storeProduct.Name);
+            formData.append("Description", storeProduct.Description);
+            formData.append("StoreDetailGuid", storeProduct.StoreDetailGuid);
+            formData.append("UnitPrice", storeProduct.UnitPrice);
+            formData.append("storeProductImage", files[0]);
+
+
+            $.ajax({
+                url: '/Admin/AddStoreProduct',
+                type: 'POST',
+                data:  formData ,
+                cache: false,
+                contentType: false,
+                processData: false,
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN", $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                success: function (response) {
+                    if (response.success) {
+
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Market Ürünü Başarıyla Eklendi',
+                            showConfirmButton: false,
+                            timer: 3000
+                        })
+                        setTimeout(function () { window.location.reload() }, 3000);
+
+                    }
+                    else {
+
+                        var HataBilgisi = response.HataBilgisi;
+                        var Hatalar = '';
+                        for (var i = 0; i < HataBilgisi.Hata.length; i++) {
+                            Hatalar += HataBilgisi.Hata[i] + '</br>';
+                        }
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: HataBilgisi.HataAciklama,
+                            html: Hatalar
+                        })
+
+
+                    }
+                },
+                error: function (err) {
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: "HATA OLUŞTU. TEKRAR DENEYİNİZ.",
+                    })
+                }
+            });
+
+        });
+
+        $('.btnMarketÜrünDetay').click(function () {
+            $('#txtMarketÜrünAd_Update').val('');
+            var storeProductGuid = $(this).attr('data-guid');
+            $.ajax({
+                url: '/Admin/MarketÜrün' + storeProductGUID,
+                type: 'get',
+                success: function (response) {
+                    if (response.success) {
+
+
+                        $('#btnUpdateMarketÜrünü').attr('data-guid', storeProductGUID)
+
+                        $('#txtMarketÜrünAd_Update').val(response.data.Name);
+
+                    }
+                    else {
+
+                        var HataBilgisi = response.HataBilgisi;
+                        var Hatalar = '';
+                        if (HataBilgisi.Hata != null) {
+                            for (var i = 0; i < HataBilgisi.Hata.length; i++) {
+                                Hatalar += HataBilgisi.Hata[i] + '</br>';
+                            }
+                        }
+
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: HataBilgisi.HataAciklama,
+                            html: Hatalar
+                        })
+
+
+                    }
+                },
+                error: function (err) {
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: "HATA OLUŞTU. TEKRAR DENEYİNİZ.",
+                    })
+                }
+            });
+
+
+        });
+
+
+        $('#btnUpdateMarketÜrünü').click(function () {
+            var storeProduct = new Object();
+
+            storeProduct.Name = $('#txtMarketÜrünAd_Update').val();
+
+            storeProduct.Guid = $(this).attr('data-guid');
+
+            $.ajax({
+                url: '/Admin/UpdateStoreProduct',
+                type: 'post',
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN", $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                data: { storeProduct },
+                success: function (response) {
+                    if (response.success) {
+
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Market Ürünü Başarıyla Güncellendi',
+                            showConfirmButton: false,
+                            timer: 3000
+                        })
+                        setTimeout(function () { window.location.reload() }, 3000);
+
+                    }
+                    else {
+
+                        var HataBilgisi = response.HataBilgisi;
+                        var Hatalar = '';
+                        for (var i = 0; i < HataBilgisi.Hata.length; i++) {
+                            Hatalar += HataBilgisi.Hata[i] + '</br>';
+                        }
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: HataBilgisi.HataAciklama,
+                            html: Hatalar
+                        })
+
+
+                    }
+                },
+                error: function (err) {
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: "HATA OLUŞTU. TEKRAR DENEYİNİZ.",
+                    })
+                }
+            });
+
+        });
+
+
+        $('.btnMarketÜrünSil').click(function () {
+            var storeProductGUID = $(this).attr('data-guid');
+
+            Swal.fire({
+                title: 'UYARI!',
+                text: "'Market Ürününü Silmek İstediğinizden Emin misiniz?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Evet!',
+                cancelButtonText: 'Hayır',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '/Admin/RemoveStoreProduct
+                            beforeSend: function (xhr) {
+                            xhr.setRequestHeader("XSRF-TOKEN", $('input:hidden[name="__RequestVerificationToken"]').val());
+                        },
+                        success: function (response) {
+                            if (response.success) {
+
+                                Swal.fire({
+                                    position: 'top-end',
+                                    icon: 'success',
+                                    title: 'Market Ürünü Başarıyla Silindi',
+                                    showConfirmButton: false,
+                                    timer: 3000
+                                })
+                                setTimeout(function () { window.location.reload() }, 3000);
+
+                            }
+                            else {
+
+                                var HataBilgisi = response.HataBilgisi;
+                                var Hatalar = '';
+                                for (var i = 0; i < HataBilgisi.Hata.length; i++) {
+                                    Hatalar += HataBilgisi.Hata[i] + '</br>';
+                                }
+
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: HataBilgisi.HataAciklama,
+                                    html: Hatalar
+                                })
+
+
+                            }
+                        },
+                        error: function (err) {
+
+                            Swal.fire({
+                                icon: 'error',
+                                title: "HATA OLUŞTU. TEKRAR DENEYİNİZ.",
+                            })
+                        }
+                    });
+                }
+            })
+        });
+
+    })
+
+</script>
