@@ -9,44 +9,267 @@
 <div class="card">
     <div class="card-header">
         <h3 class="card-title">Kullanıcılar</h3>
-
         <div class="card-tools">
-            <button type="button" class="btn btn-block btn-success" data-toggle="modal" data-target="#modal-UserAdd">Ekle</button>
+            <button type="button" class="btn btn-block btn-info" data-toggle="modal" data-target="#modal-NewUser">Ekle</button>
+
         </div>
     </div>
     <div class="card-body">
+
         <table id="tblUsers" class="table table-bordered table-striped">
             <thead>
                 <tr>
-
-                    <th style="width:10%"></th>
-                    <th>Adı</th>
-                    <th>Soyadı</th>
+                    <th style="width: 10px">#</th>
+                    <th>Ad</th>
+                    <th>Soyad</th>
                     <th>E-Posta</th>
-                    <th style="width:25%">İşlemler</th>
+                    <th>Telefon</th>
+                    <th style="width:20%"></th>
+
                 </tr>
             </thead>
             <tbody>
                 @{
-                    for (int i = 0; i < Model.Count(); i++)
+                    for (int i = 0; i < Model.Count; i++)
                     {
                         <tr>
                             <td>@Convert.ToInt32(i+1)</td>
                             <td>@Model[i].FirstName</td>
                             <td>@Model[i].LastName</td>
                             <td>@Model[i].Email</td>
+                            <td>@Model[i].PhoneNumber</td>
+                            <td>@Model[i].Adress</td>
+
                             <td>
                                 <div class="btn-group">
-                                    <button type="button" class="btnRemoveProduct btn btn-danger" data-id=@Model[i].Guid>Sil</button>
+                                    <button type="button" class="btn btn-info btnUserDetail" data-guid=@Model[i].Guid data-toggle="modal" data-target="#modal-UserDetail">Detay</button>
+                                    <button type="button" class="btn btn-danger btnRemoveUser" data-guid=@Model[i].Guid>Sil</button>
                                 </div>
                             </td>
                         </tr>
                     }
                 }
 
+
+
             </tbody>
         </table>
+
+
     </div>
-    <!-- /.card-body -->
-    <!-- /.card-footer-->
+
 </div>
+<div class="modal fade" id="modal-UserDetail">
+    <div class="modal-dialog modal-UserDetail">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Kullanıcı Detayları</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group row">
+                    <label for="divAd" class="col-sm-2 col-form-label">Ad</label>
+                    <div class="col-sm-10" id="divAd">
+                    </div>
+
+                    <label for="divSoyad" class="col-sm-2 col-form-label">Soyad</label>
+                    <div class="col-sm-10" id="divSoyad">
+                    </div>
+
+                    <label for="divEPosta" class="col-sm-2 col-form-label">E-Posta</label>
+                    <div class="col-sm-10" id="divEPosta">
+                    </div>
+
+
+                    <label for="divTel" class="col-sm-2 col-form-label">Telefon</label>
+                    <div class="col-sm-10" id="divTel">
+                    </div>
+
+
+                </div>
+            </div>
+
+        </div>
+        <div class="modal-footer justify-content-between">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Kapat</button>
+
+        </div>
+
+    </div>
+</div>
+
+<div class="modal fade" id="modal-NewUser">
+    <div class="modal-dialog modal-NewUser">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Yeni Kullanıcı</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="txtUserName_Add">Kullanıcı Adı</label>
+                    <input type="text" class="form-control" id="txtUserName_Add">
+                </div>
+
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="txtLastName_Add">Kullanıcı Soyadı</label>
+                    <input type="text" class="form-control" id="txtLastName_Add">
+                </div>
+
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="txtEposta_Add">Kullanıcı E-Posta</label>
+                    <input type="text" class="form-control" id="txtEposta_Add">
+                </div>
+
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="txtTelefon_Add">kullanıcı Telefon</label>
+                    <input type="text" class="form-control" id="txtTelefon_Add">
+                </div>
+
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="txtAdres_Add">kullanıcı Adres</label>
+                    <input type="text" class="form-control" id="txtAdres_Add">
+                </div>
+
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Kapat</button>
+                <button type="button" class="btn btn-primary" id="btnAddUser">Kaydet</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $("#tblUsers").DataTable({
+            "responsive": true,
+            "lengthChange": false,
+            "autoWidth": false,
+            "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+        }).buttons().container().appendTo('#tblUsers_wrapper .col-md-6:eq(0)');
+
+        $('#btnAddUser').click(function () {
+
+            var user = {
+                Name: $('#txtUserName_Add').val(),
+                LastName: $('#txtLastName_Add').val(),
+                Email: $('#txtEposta_Add').val(),
+                PhoneNumber: $('#txtTelefon_Add').val(),
+                Adress: $('#txtAdres_Add').val(),
+               
+            }
+
+
+           
+
+            $.ajax({
+                url: '/Admin/AddUser',
+                type: 'post',
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN", $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                data: { user },
+
+                success: function (response) {
+                    if (response.success) {
+
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Kullanıcı Başarıyla Eklendi',
+                            showConfirmButton: false,
+                            timer: 3000
+                        })
+                        setTimeout(function () { window.location.reload() }, 3000);
+
+                    }
+                    else {
+
+                        var HataBilgisi = response.HataBilgisi;
+                        var Hatalar = '';
+                        for (var i = 0; i < HataBilgisi.Hata.length; i++) {
+                            Hatalar += HataBilgisi.Hata[i] + '</br>';
+                        }
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: HataBilgisi.HataAciklama,
+                            html: Hatalar
+                        })
+
+
+                    }
+                },
+                error: function (err) {
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: "HATA OLUŞTU. TEKRAR DENEYİNİZ.",
+                    })
+                }
+            });
+
+        });
+
+        $('.btnUserDetail').click(function () {
+            var userGUID = $(this).attr('data-guid');
+            $.ajax({
+                url: '/Admin/User/' + userGUID,
+                type: 'get',
+                success: function (response) {
+                    if (response.success) {
+                        $('#divAd').html('').append(response.data.FirstName);
+                        $('#divSoyad').html('').append(response.data.LastName);
+                        $('#divEPosta').html('').append(response.data.Email);
+                        $('#divTel').html('').append(response.data.PhoneNumber);
+                        $('#divAdres').html('').append(response.data.Adress);
+
+                    }
+                    else {
+
+                        var HataBilgisi = response.HataBilgisi;
+                        var Hatalar = '';
+                        if (HataBilgisi.Hata != null) {
+                            for (var i = 0; i < HataBilgisi.Hata.length; i++) {
+                                Hatalar += HataBilgisi.Hata[i] + '</br>';
+                            }
+                        }
+
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: HataBilgisi.HataAciklama,
+                            html: Hatalar
+                        })
+
+
+                    }
+                },
+                error: function (err) {
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: "HATA OLUŞTU. TEKRAR DENEYİNİZ.",
+                    })
+                }
+            });
+
+
+        });
+
+    })
+
+</script>

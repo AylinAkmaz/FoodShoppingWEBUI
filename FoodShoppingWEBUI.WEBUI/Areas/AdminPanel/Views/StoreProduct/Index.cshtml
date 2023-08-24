@@ -11,8 +11,8 @@
     <div class="card-header">
         <h3 class="card-title">Market Ürünleri</h3>
         <div class="card-tools">
-            <button type="button" class="btn btn-block btn-warning" data-toggle="modal" data-target="#modal-StoreDetail">Market Kategorisi</button>
             <button type="button" class="btn btn-block btn-info" data-toggle="modal" data-target="#modal-NewStoreProduct">Ekle</button>
+            <button type="button" class="btn btn-block btn-warning" data-toggle="modal" data-target="#modal-StoreDetail">Market Kategorisi</button>
 
         </div>
     </div>
@@ -31,14 +31,14 @@
     </thead>
     <tbody>
         @{
-            for (int i = 0; i <@Model.StoreProducts.Count(); i++)
+            for (int i = 0; i <Model.StoreProducts.Count(); i++)
             {
-                string storeProductImagePath = "/MediaUpload/" + @Model.StoreProducts[i].FeaturedImage;
+                string imagePath = "/MediaUpload/" + @Model.StoreProducts[i].FeaturedImage;
                 <tr>
                     <td>@Convert.ToInt32(i+1)</td>
                     <td>
-                        <a href="@storeProductImagePath" data-toggle="lightbox" data-title="@Model.StoreProducts[i].Name">
-                            <img src="@storeProductImagePath" class="img-fluid mb-2" alt="@Model.StoreProducts[i].Name" width="100" />
+                                <a href="@imagePath" data-toggle="lightbox" data-title="@Model.StoreProducts[i].Name">
+                                    <img src="@imagePath" class="img-fluid mb-2" alt="black sample" width="100" />
                         </a>
 
                     <td> @Model.StoreProducts[i].Name</td>
@@ -59,8 +59,6 @@
 
     </tbody>
 </table>
-      @*  @await Component.InvokeAsync("StoreProducts",Model)*@
-
     </div>
 
 </div>
@@ -74,8 +72,17 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body">
-                @await Component.InvokeAsync("StoreDetails",@Model.StoreDetails)
+            <div class="form-group">
+                <label for="ddlStoreProductStoreDetail">Market Alt Kategorisi</label>
+                <select class="custom-select rounded-0" id="ddlStoreProductStoreDetail">
+                    @{
+                        for (int i = 0; i < Model.StoreDetails.Count; i++)
+                        {
+                            <option value=@Model.StoreDetails[i].Guid>@Model.StoreDetails[i].Name</option>
+                        }
+                    }
+
+                </select>
             </div>
             <div class="modal-footer justify-content-between">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Kapat</button>
@@ -143,13 +150,11 @@
                 <button type="button" class="btn btn-primary" id="btnAddMarketÜrün">Kaydet</button>
             </div>
         </div>
-        <!-- /.modal-content -->
     </div>
-    <!-- /.modal-dialog -->
 </div>
 
 <div class="modal fade" id="modal-DetayMarketÜrünü">
-    <div class="modal-dialog modal-DetayMarketÜrünü">
+    <div class="modal-dialog ">
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title">Market Ürünü Güncelle</h4>
@@ -159,18 +164,18 @@
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <label for="txtMarketÜrünAd_Add">Market Ürün Adı</label>
+                    <label for="txtMarketÜrünAd_Update">Market Ürün Adı</label>
                     <input type="text" class="form-control" id="txtMarketÜrünAd_Update">
                 </div>
             </div>
             
             <div class="form-group">
-                <label for="txtMarketÜrünAd_Add">Birim Fiyatı</label>
-                <input type="text" class="form-control" id="txtMarketÜrünüUnitPrice_Add">
+                <label for="txtMarketÜrünüUnitPrice_Update">Birim Fiyatı</label>
+                <input type="text" class="form-control" id="txtMarketÜrünüUnitPrice_Update">
             </div>
               <div class="form-group">
-                    <label for="ddlStoreProductStoreDetail">Market Alt Kategorisi</label>
-                    <select class="custom-select rounded-0" id="ddlStoreProductStoreDetail">
+                <label for="ddlStoreProductStoreDetail_Update">Market Alt Kategorisi</label>
+                    <select class="custom-select rounded-0" id="ddlStoreProductStoreDetail_Update">
                         @{
                             for (int i = 0; i < Model.StoreDetails.Count; i++)
                             {
@@ -186,16 +191,16 @@
                 <label for="fuMarketÜrünüFeaturedImage">Öne Çıkan Görsel</label>
                 <div class="input-group">
                     <div class="custom-file">
-                        <input type="file" class="custom-file-input" id="fuMarketÜrünüFeaturedImage_Add">
-                        <label class="custom-file-label" for="fuMarketÜrünüFeaturedImage_Add">Choose file</label>
+                        <input type="file" class="custom-file-input" id="fuMarketÜrünüFeaturedImage_Update">
+                        <label class="custom-file-label" for="fuMarketÜrünüFeaturedImage_Update">Choose file</label>
                     </div>
 
                 </div>
             </div>
 
             <div class="form-group">
-                <label for="txtMarketÜrünDescription_Add">Market Ürün Açıklaması</label>
-                <textarea class="form-control" rows="5" id="txtMarketÜrünDescription_Add"></textarea>
+                <label for="txtMarketÜrünDescription_Update">Market Ürün Açıklaması</label>
+                <textarea class="form-control" rows="5" id="txtMarketÜrünDescription_Update"></textarea>
             </div>
 
             <div class="modal-footer justify-content-between">
@@ -203,9 +208,7 @@
                 <button type="button" class="btn btn-primary" id="btnUpdateMarketÜrünü">Kaydet</button>
             </div>
         </div>
-        <!-- /.modal-content -->
     </div>
-    <!-- /.modal-dialog -->
 </div>
 
 
@@ -231,7 +234,7 @@
             }
             var files = $('#fuMarketÜrünüFeaturedImage_Add').prop('files');
 
-             var formData = new FormData();
+            var formData = new FormData();
             formData.append("Name", storeProduct.Name);
             formData.append("Description", storeProduct.Description);
             formData.append("StoreDetailGuid", storeProduct.StoreDetailGuid);
@@ -241,7 +244,7 @@
 
             $.ajax({
                 url: '/Admin/AddStoreProduct',
-                type: 'POST',
+                type: 'post',
                 data:  formData ,
                 cache: false,
                 contentType: false,
@@ -290,20 +293,26 @@
 
         });
 
+
+
         $('.btnMarketÜrünDetay').click(function () {
-            $('#txtMarketÜrünAd_Update').val('');
-            var storeProductGuid = $(this).attr('data-guid');
+           
+            var guid = $(this).attr('data-guid');
+            
             $.ajax({
-                url: '/Admin/MarketÜrün' + storeProductGUID,
+                url: '/Admin/StoreProduct' + guid,
                 type: 'get',
                 success: function (response) {
                     if (response.success) {
-
-
-                        $('#btnUpdateMarketÜrünü').attr('data-guid', storeProductGUID)
-
+                        $('#modal-DetayMarketÜrünü').modal('show');
                         $('#txtMarketÜrünAd_Update').val(response.data.Name);
+                        $('#txtMarketÜrünüUnitPrice_Update').val(response.data.UnitPrice);
+                        $('#txtMarketÜrünDescription_Update').val(response.data.Description);
 
+                        $('#btnUpdateMarketÜrünü').attr('data-guid', guid)
+
+                        const select = document.querySelector('#ddlStoreProductStoreDetail_Update')
+                        select.value = response.data.StoreDetailGuid;
                     }
                     else {
 
@@ -339,11 +348,24 @@
 
 
         $('#btnUpdateMarketÜrünü').click(function () {
-            var storeProduct = new Object();
 
-            storeProduct.Name = $('#txtMarketÜrünAd_Update').val();
+            var storeProduct = {
+                 Name = $('#txtMarketÜrünAd_Update').val();
+                 StoreDetailGuid: $('#ddlStoreProductStoreDetail_Update').val(),
+                 Description: $('#txtMarketÜrünDescription_Update').val(),
+                 UnitPrice: $('#txtMarketÜrünüUnitPrice_Update').val(),
+                 Guid = $(this).attr('data-guid');
+            }
 
-            storeProduct.Guid = $(this).attr('data-guid');
+            var files = $('#fuMarketÜrünüFeaturedImage_Update').prop('files');
+
+            var formData = new FormData();
+            formData.append("Name", storeProduct.Name);
+            formData.append("StoreDetailGuid", storeProduct.StoreDetailGuid);
+            formData.append("Description", storeProduct.Description);
+            formData.append("UnitPrice", storeProduct.UnitPrice);
+            formData.append("Guid", storeProduct.Guid);
+            formData.append("storeProduct", files[0]);
 
             $.ajax({
                 url: '/Admin/UpdateStoreProduct',
@@ -409,7 +431,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
-                        url: '/Admin/RemoveStoreProduct
+                        url: '/Admin/RemoveStoreProduct/' + storeProductGUID,
                             beforeSend: function (xhr) {
                             xhr.setRequestHeader("XSRF-TOKEN", $('input:hidden[name="__RequestVerificationToken"]').val());
                         },

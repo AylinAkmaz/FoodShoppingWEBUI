@@ -1,7 +1,6 @@
 ﻿using FoodShoppingWEBUI.Core.DTO;
 using FoodShoppingWEBUI.Core.Result;
 using FoodShoppingWEBUI.Helper.SessionHelper;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using RestSharp;
@@ -53,7 +52,7 @@ namespace FoodShoppingWEBUI.WEBUI.Areas.AdminPanel.Controllers
                 };
 
                 foodProduct.FeaturedImage = fileName;
-
+            }
 
                 var url = "http://localhost:5291/AddFoodProduct";
                 var client = new RestClient(url);
@@ -79,69 +78,21 @@ namespace FoodShoppingWEBUI.WEBUI.Areas.AdminPanel.Controllers
                     return Json(new { success = false, HataBilgisi = responseObject.HataBilgisi });
                 }
 
+
             }
-            else
+            [HttpGet("/Admin/FoodProduct/{guid}")]
+            public async Task<IActionResult> GetFoodProduct(Guid guid)
             {
-                return Json(new { });
-            }
-        }
-        [HttpGet("/Admin/FoodProduct/{guid}")]
-        public async Task<IActionResult> GetFoodProduct(Guid guid)
-        {
-            var url = "http://localhost:5291/FoodProduct/" + guid;
-            var client = new RestClient(url);
-            var request = new RestRequest(url, Method.Get);
-            request.AddHeader("Content-Type", "application/json");
-            request.AddHeader("Authorization", "Bearer " + SessionManager.LoggedUser.Token);
-            RestResponse restResponse = await client.ExecuteAsync(request);
-
-            var responseObject = JsonConvert.DeserializeObject<APIResult<FoodProductDTO>>(restResponse.Content);
-
-            var foodProduct = responseObject.Data;
-
-            if (restResponse.StatusCode == HttpStatusCode.OK)
-            {
-                return Json(new { success = true, data = responseObject.Data });
-            }
-            else if (restResponse.StatusCode == HttpStatusCode.BadRequest)
-            {
-                return Json(new { success = false, HataBilgisi = responseObject.HataBilgisi });
-            }
-            else
-            {
-                return Json(new { success = false, HataBilgisi = responseObject.HataBilgisi });
-            }
-        }
-
-        [HttpPost("/Admin/UpdateFoodProduct")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdateFoodProduct(FoodProductDTO foodProduct, IFormFile foodProductImage)
-        {
-            if (foodProductImage != null)
-            {
-                string fileName = foodProductImage.FileName.Split('.')[foodProductImage.FileName.Split('.').Length - 2] + "_" + Guid.NewGuid() + "." + foodProductImage.FileName.Split('.')[foodProductImage.FileName.Split('.').Length - 1];
-
-                string uploadFolder = Path.Combine(_webHostEnvironment.WebRootPath, "MediaUpload", fileName);
-
-                using (var fileStream = new FileStream(uploadFolder, FileMode.Create))
-                {
-                    foodProductImage.CopyTo(fileStream);
-                };
-
-                foodProduct.FeaturedImage = fileName;
-
-
-
-                var url = "http://localhost:5291/UpdateFoodProduct";
+                var url = "http://localhost:5291/FoodProduct/" + guid;
                 var client = new RestClient(url);
-                var request = new RestRequest(url, Method.Post);
+                var request = new RestRequest(url, Method.Get);
                 request.AddHeader("Content-Type", "application/json");
                 request.AddHeader("Authorization", "Bearer " + SessionManager.LoggedUser.Token);
-                var body = JsonConvert.SerializeObject(foodProduct);
-                request.AddBody(body, "application/json");
                 RestResponse restResponse = await client.ExecuteAsync(request);
 
                 var responseObject = JsonConvert.DeserializeObject<APIResult<FoodProductDTO>>(restResponse.Content);
+
+                var foodProduct = responseObject.Data;
 
                 if (restResponse.StatusCode == HttpStatusCode.OK)
                 {
@@ -156,39 +107,82 @@ namespace FoodShoppingWEBUI.WEBUI.Areas.AdminPanel.Controllers
                     return Json(new { success = false, HataBilgisi = responseObject.HataBilgisi });
                 }
             }
-            else
+
+            [HttpPost("/Admin/UpdateFoodProduct")]
+            [ValidateAntiForgeryToken]
+            public async Task<IActionResult> UpdateFoodProduct(FoodProductDTO foodProduct, IFormFile foodProductImage)
             {
-                return Json(new { });
-            }
-        }
-
-
-        [HttpPost("/Admin/RemoveFoodProduct/{FoodProductGuid}")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RemoveFoodProduct(Guid FoodProductGuid)
-        {
-            var url = "http://localhost:5291/RemoveFoodProduct/" + FoodProductGuid;
-            var client = new RestClient(url);
-            var request = new RestRequest(url, Method.Post);
-            request.AddHeader("Content-Type", "application/json");
-            request.AddHeader("Authorization", "Bearer " + SessionManager.LoggedUser.Token);
-            RestResponse restResponse = await client.ExecuteAsync(request);
-
-            var responseObject = JsonConvert.DeserializeObject<APIResult<bool>>(restResponse.Content);
-
-            if (restResponse.StatusCode == HttpStatusCode.OK)
+            if (foodProductImage != null)
             {
-                return Json(new { success = true, data = responseObject.Data });
-            }
-            else if (restResponse.StatusCode == HttpStatusCode.BadRequest)
-            {
-                return Json(new { success = false, HataBilgisi = responseObject.HataBilgisi });
+                string fileName = foodProductImage.FileName.Split('.')[foodProductImage.FileName.Split('.').Length - 2] + "_" + Guid.NewGuid() + "." + foodProductImage.FileName.Split('.')[foodProductImage.FileName.Split('.').Length - 1];
+
+                string uploadFolder = Path.Combine(_webHostEnvironment.WebRootPath, "MediaUpload", fileName);
+
+                using (var fileStream = new FileStream(uploadFolder, FileMode.Create))
+                {
+                    foodProductImage.CopyTo(fileStream);
+                };
+
+                foodProduct.FeaturedImage = fileName;
             }
             else
             {
-                return Json(new { success = false, HataBilgisi = responseObject.HataBilgisi });
+                foodProduct.FeaturedImage = null;
+            }
+
+            var url = "http://localhost:5291/UpdateFoodProduct";
+                    var client = new RestClient(url);
+                    var request = new RestRequest(url, Method.Post);
+                    request.AddHeader("Content-Type", "application/json");
+                    request.AddHeader("Authorization", "Bearer " + SessionManager.LoggedUser.Token);
+                    var body = JsonConvert.SerializeObject(foodProduct);
+                    request.AddBody(body, "application/json");
+                    RestResponse restResponse = await client.ExecuteAsync(request);
+
+                    var responseObject = JsonConvert.DeserializeObject<APIResult<FoodProductDTO>>(restResponse.Content);
+
+                    if (restResponse.StatusCode == HttpStatusCode.OK)
+                    {
+                        return Json(new { success = true, data = responseObject.Data });
+                    }
+                    else if (restResponse.StatusCode == HttpStatusCode.BadRequest)
+                    {
+                        return Json(new { success = false, HataBilgisi = responseObject.HataBilgisi });
+                    }
+                    else
+                    {
+                        return Json(new { success = false, HataBilgisi = responseObject.HataBilgisi });
+                    }
+                
+            }
+
+
+            [HttpPost("/Admin/RemoveFoodProduct/{FoodProductGuid}")]
+            [ValidateAntiForgeryToken]
+            public async Task<IActionResult> RemoveFoodProduct(Guid FoodProductGuid)
+            {
+                var url = "http://localhost:5291/RemoveFoodProduct/" + FoodProductGuid;
+                var client = new RestClient(url);
+                var request = new RestRequest(url, Method.Post);
+                request.AddHeader("Content-Type", "application/json");
+                request.AddHeader("Authorization", "Bearer " + SessionManager.LoggedUser.Token);
+                RestResponse restResponse = await client.ExecuteAsync(request);
+
+                var responseObject = JsonConvert.DeserializeObject<APIResult<bool>>(restResponse.Content);
+
+                if (restResponse.StatusCode == HttpStatusCode.OK)
+                {
+                    return Json(new { success = true, data = responseObject.Data });
+                }
+                else if (restResponse.StatusCode == HttpStatusCode.BadRequest)
+                {
+                    return Json(new { success = false, HataBilgisi = responseObject.HataBilgisi });
+                }
+                else
+                {
+                    return Json(new { success = false, HataBilgisi = responseObject.HataBilgisi });
+                }
             }
         }
     }
-}
 

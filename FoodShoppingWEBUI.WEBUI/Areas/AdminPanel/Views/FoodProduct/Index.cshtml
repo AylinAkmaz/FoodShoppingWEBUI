@@ -1,22 +1,63 @@
 ﻿@using FoodShoppingWEBUI.Core.DTO;
 @model List<FoodProductDTO>
 @{
-    ViewData["Title"] = "FoodProduct";
+    ViewData["Title"] = "Menü Ürünleri";
     Layout = "~/Areas/AdminPanel/Views/_Layout.cshtml";
 }
 
 @Html.AntiForgeryToken()
 <div class="card">
     <div class="card-header">
-        <h3 class="card-title">Yemek Ürünleri</h3>
+        <h3 class="card-title">Menü Ürünleri</h3>
         <div class="card-tools">
-            <button type="button" class="btn btn-block btn-info" data-toggle="modal" data-target="#modal-YeniYemekÜrünü">Ekle</button>
+            <button type="button" class="btn btn-block btn-info" data-toggle="modal" data-target="#modal-YeniMenüÜrünü">Ekle</button>
 
         </div>
     </div>
     <div class="card-body">
 
-        @await Component.InvokeAsync("FoodProduct",Model)
+        <table id="tblMenüÜrünleri" class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th style="width: 10px">#</th>
+                    <th>Menü Ürünleri</th>
+                    <th>Menü Ürün Resmi</th>
+                    <th>Birim Fiyatı</th>
+                    <th style="width:20%"></th>
+
+                </tr>
+            </thead>
+            <tbody>
+                @{
+
+                    for (int i = 0; i < Model.Count; i++)
+                    {
+                        string imagePath = "/MediaUpload/" + @Model[i].FeaturedImage;
+
+                        <tr>
+                            <td>@Convert.ToInt32(i+1)</td>
+                            <td>
+                                <a href="@imagePath" data-toggle="lightbox" data-title="@Model[i].Name">
+                                <img src="@imagePath" class="img-fluid mb-2" alt="black sample" width="100" />
+                                </a>
+                            <td>@Model[i].Name</td>
+                            <td>@Model[i].UnitPrice</td>
+                            <td>
+
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-info btnFoodProductDetail" data-guid=@Model[i].Guid data-toggle="modal" data-target="#modal-DetayFoodProduct">Güncelle</button>
+                                    <button type="button" class="btn btn-danger btnFoodProductSil" data-guid=@Model[i].Name>Sil</button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+
+
+
+            </tbody>
+        </table>
+
 
 
 
@@ -24,46 +65,46 @@
 
 </div>
 
-<div class="modal fade" id="modal-YeniYemekÜrünü">
-    <div class="modal-dialog modal-YeniYemekÜrünü">
+<div class="modal fade" id="modal-YeniMenüÜrünü">
+    <div class="modal-dialog ">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">Yeni Yemek Ürünü </h4>
+                <h4 class="modal-title">Yeni Menü Ürünü </h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <label for="txtFoodProduct_Add">Yemek Ürün Adı</label>
+                    <label for="txtFoodProduct_Add">Menü Ürün Adı</label>
                     <input type="text" class="form-control" id="txtFoodProduct_Add">
                 </div>
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <label for="txtFoodProductDescription_Add">Yemek Ürün Açıklaması</label>
+                    <label for="txtFoodProductDescription_Add">Menü Ürün Açıklaması</label>
                     <input type="text" class="form-control" id="txtFoodProductDescription_Add">
                 </div>
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <label for="txtFoodProductUnitPrice_Add">Yemek Ürün Fiyatı</label>
+                    <label for="txtFoodProductUnitPrice_Add">Menü Ürün Fiyatı</label>
                     <input type="text" class="form-control" id="txtFoodProductUnitPrice_Add">
                 </div>
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <label for="txtFoodProductQuantity_Add">Yemek Ürün Miktarı</label>
+                    <label for="txtFoodProductQuantity_Add">Menü Ürün Miktarı</label>
                     <input type="text" class="form-control" id="txtFoodProductQuantity_Add">
                 </div>
             </div>
          
             <div class="form-group">
-                <label for="fuFoodProductFeaturedImage_Add">Öne Çıkan Görsel</label>
+                <label for="fuFoodProductFeaturedImage">Öne Çıkan Görsel</label>
                 <div class="input-group">
                     <div class="custom-file">
                         <input type="file" class="custom-file-input" id="fuFoodProductFeaturedImage_Add">
-                        <label class="custom-file-label" for="fuFoodProductFeaturedImage_Add">Choose file</label>
+                        <label class="custom-file-label" for="fuFoodProductFeaturedImage_Add">Dosya Seç</label>
                     </div>
 
                 </div>
@@ -75,9 +116,303 @@
                 <button type="button" class="btn btn-primary" id="btnAddFoodProduct">Kaydet</button>
             </div>
         </div>
-        <!-- /.modal-content -->
     </div>
-    <!-- /.modal-dialog -->
 </div>
 
+
+<div class="modal fade" id="modal-DetayFoodProduct">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Menü Ürününü Güncelle</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="txtFoodProductAd_Update">Menü Ürünü Adı</label>
+                    <input type="text" class="form-control" id="txtFoodProductAd_Update">
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="txtFoodProductDescription_Update">Menü Ürün Açıklaması</label>
+                    <input type="text" class="form-control" id="txtFoodProductDescription_Update">
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="txtFoodProductUnitPrice_Update">Menü Ürün Fiyatı</label>
+                    <input type="text" class="form-control" id="txtFoodProductUnitPrice_Update">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="fuFoodProductFeaturedImage">Öne Çıkan Görsel</label>
+                <div class="input-group">
+                    <div class="custom-file">
+                        <input type="file" class="custom-file-input" id="fuFoodProductFeaturedImage_Update">
+                        <label class="custom-file-label" for="fuFoodProductFeaturedImage_Update">Choose file</label>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Kapat</button>
+                <button type="button" class="btn btn-primary" id="btnUpdateFoodProduct">Kaydet</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $("#tblMenüÜrünleri").DataTable({
+            "responsive": true,
+            "lengthChange": false,
+            "autoWidth": false,
+            "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+        }).buttons().container().appendTo('#tblMenüÜrünleri_wrapper .col-md-6:eq(0)');
+
+
+
+        $('#btnAddFoodProduct').click(function () {
+
+            var foodProduct = {
+
+            Name = $('#txtFoodProductAd_Add').val(),
+            Description = $('#txtFoodProductDescription_Add').val(),
+            UnitPrice = $('#txtFoodProductUnitPrice_Add').val(),
+            Quantity = $('#txtFoodProductQuantity_Add').val(),
+            }
+            var files = $('#fuFoodProductFeaturedImage_Add').prop('files');
+            
+            var formData = new FormData();
+            formData.append("Name", foodProduct.Name);
+            formData.append("Quantity", foodProduct.Quantity);
+            formData.append("Description", foodProduct.Description);
+            formData.append("UnitPrice", foodProduct.UnitPrice);
+           
+            formData.append("foodProductImage", files[0]);
+
+
+            $.ajax({
+                url: '/Admin/AddFoodProduct',
+                type: 'post',
+                data: formData,
+                cahce: false,
+                contentType: false,
+                processData: false,
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN", $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                success: function (response) {
+                    if (response.success) {
+
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Menü Ürünü Başarıyla Eklendi',
+                            showConfirmButton: false,
+                            timer: 3000
+                        })
+                        setTimeout(function () { window.location.reload() }, 3000);
+
+                    }
+                    else {
+
+                        var HataBilgisi = response.HataBilgisi;
+                        var Hatalar = '';
+                        for (var i = 0; i < HataBilgisi.Hata.length; i++) {
+                            Hatalar += HataBilgisi.Hata[i] + '</br>';
+                        }
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: HataBilgisi.HataAciklama,
+                            html: Hatalar
+                        })
+
+
+                    }
+                },
+                error: function (err) {
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: "HATA OLUŞTU. TEKRAR DENEYİNİZ.",
+                    })
+                }
+            });
+
+        });
+        $('.btnFoodProductDetail').click(function () {
+            $('#txtFoodProductAd_Update').val('');
+            var guid = $(this).attr('data-guid');
+            $.ajax({
+                url: '/Admin/FoodProduct/' + guid,
+                type: 'get',
+                success: function (response) {
+                    if (response.success) {
+
+                        $('#modal-DetayFoodProduct').modal('show');
+                        $('#txtFoodProductAd_Update').val(response.data.Name);
+
+                        $('#btnUpdateFoodProduct').attr('data-guid', guid)
+
+
+                    }
+                    else {
+
+                        var HataBilgisi = response.HataBilgisi;
+                        var Hatalar = '';
+                        if (HataBilgisi.Hata != null) {
+                            for (var i = 0; i < HataBilgisi.Hata.length; i++) {
+                                Hatalar += HataBilgisi.Hata[i] + '</br>';
+                            }
+                        }
+
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: HataBilgisi.HataAciklama,
+                            html: Hatalar
+                        })
+
+
+                    }
+                },
+                error: function (err) {
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: "HATA OLUŞTU. TEKRAR DENEYİNİZ.",
+                    })
+                }
+            });
+
+
+        });
+
+        $('#btnUpdateFoodProduct').click(function () {
+            var foodProduct = new Object();
+
+            foodProduct.Name = $('#txtFoodProductAd_Update').val();
+            foodProduct.Guid = $(this).attr('data-guid');
+
+            $.ajax({
+                url: '/Admin/UpdateFoodProduct',
+                type: 'post',
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN", $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                data: { role },
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Menü Ürünü Başarıyla Güncellendi',
+                            showConfirmButton: false,
+                            timer: 3000
+                        })
+                        setTimeout(function () { window.location.reload() }, 3000);
+
+                    }
+                    else {
+
+                        var HataBilgisi = response.HataBilgisi;
+                        var Hatalar = '';
+                        for (var i = 0; i < HataBilgisi.Hata.length; i++) {
+                            Hatalar += HataBilgisi.Hata[i] + '</br>';
+                        }
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: HataBilgisi.HataAciklama,
+                            html: Hatalar
+                        })
+
+
+                    }
+                },
+                error: function (err) {
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: "HATA OLUŞTU. TEKRAR DENEYİNİZ.",
+                    })
+                }
+            });
+
+        });
+
+
+        $('.btnFoodProductSil').click(function () {
+            var FoodProductGuid = $(this).attr('data-guid');
+
+            Swal.fire({
+                title: 'UYARI!',
+                text: "'Menü Ürününü Silmek İstediğinizden Emin misiniz?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Evet!',
+                cancelButtonText: 'Hayır',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '/Admin/RemoveFoodProduct/' + FoodProductGuid,
+                        type: 'post',
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader("XSRF-TOKEN", $('input:hidden[name="__RequestVerificationToken"]').val());
+                        },
+                        success: function (response) {
+                            if (response.success) {
+
+                                Swal.fire({
+                                    position: 'top-end',
+                                    icon: 'success',
+                                    title: 'Menü Ürünü Başarıyla Silindi',
+                                    showConfirmButton: false,
+                                    timer: 3000
+                                })
+                                setTimeout(function () { window.location.reload() }, 3000);
+
+                            }
+                            else {
+
+                                var HataBilgisi = response.HataBilgisi;
+                                var Hatalar = '';
+                                for (var i = 0; i < HataBilgisi.Hata.length; i++) {
+                                    Hatalar += HataBilgisi.Hata[i] + '</br>';
+                                }
+
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: HataBilgisi.HataAciklama,
+                                    html: Hatalar
+                                })
+
+
+                            }
+                        },
+                        error: function (err) {
+
+                            Swal.fire({
+                                icon: 'error',
+                                title: "HATA OLUŞTU. TEKRAR DENEYİNİZ.",
+                            })
+                        }
+                    });
+                }
+            })
+        });
+
+    })
+
+</script>
 

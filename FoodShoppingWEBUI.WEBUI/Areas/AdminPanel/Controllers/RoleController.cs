@@ -119,11 +119,11 @@ namespace FoodShoppingWEBUI.WEBUI.Areas.AdminPanel.Controllers
         }
 
 
-        [HttpPost("/Admin/RemoveRole/{RoleGuid}")]
+        [HttpPost("/Admin/RemoveRole/{roleGuid}")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RemoveStoreCategory(Guid RoleGuid)
+        public async Task<IActionResult> RemoveStoreCategory(Guid roleGuid)
         {
-            var url = "http://localhost:5291/RemoveRole/" + RoleGuid;
+            var url = "http://localhost:5291/RemoveRole/" + roleGuid;
             var client = new RestClient(url);
             var request = new RestRequest(url, Method.Post);
             request.AddHeader("Content-Type", "application/json");

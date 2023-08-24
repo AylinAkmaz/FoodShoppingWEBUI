@@ -1,14 +1,14 @@
 ﻿@using FoodShoppingWEBUI.Core.ViewModel;
 @model CategoryViewModel
 @{
-    ViewData["Title"] = "Kategory";
+    ViewData["Title"] = "Restoranlar";
     Layout = "~/Areas/AdminPanel/Views/_Layout.cshtml";
 }
 
 @Html.AntiForgeryToken()
 <div class="card">
     <div class="card-header">
-        <h3 class="card-title">Yemek Bölümü</h3>
+        <h3 class="card-title">Restoranlar</h3>
         <div class="card-tools">
             <button type="button" class="btn btn-block btn-warning" data-toggle="modal" data-target="#modal-FoodCategories">Kategoriler</button>
             <button type="button" class="btn btn-block btn-info" data-toggle="modal" data-target="#modal-NewCategory">Ekle</button>
@@ -24,7 +24,7 @@
                     <th style="width: 10px">#</th>
                     <th>Bölüm Adı</th>
                     <th>Yemek Kategoriler</th>
-                    <th style="width:20%"></th>
+            
 
                 </tr>
             </thead>
@@ -36,12 +36,7 @@
                             <td>@Convert.ToInt32(i+1)</td>
                             <td>@Model.Categories[i].Name</td>
                             <td>@Model.FoodCategories[i].Name</td>
-                            <td>
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-info btnCategoriesDetail" data-guid=@Model.Categories[i].Guid data-toggle="modal" data-target="#modal-DetayCategories">Güncelle</button>
-                                    <button type="button" class="btn btn-danger btnCategoriesSil" data-guid=@Model.Categories[i].Guid>Sil</button>
-                                </div>
-                            </td>
+                            
                         </tr>
                     }
                 }

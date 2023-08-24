@@ -192,24 +192,27 @@
             "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
         }).buttons().container().appendTo('#tblOrderDetail_wrapper .col-md-6:eq(0)');
 
-        $('#btnMenu_Add').click(function () {
+        $('#btnOrderDetail_Add').click(function () {
 
-            var menu = {
-                Name: $('#txtMenuName_Add').val(),
-                FoodCategoryGuid: $('#ddlFoodDetailFoodCategoryAdd').val(),
-                RoleGuid: $('#ddlFoodDetailRoleAdd').val(),
+            var orderDetail = {
+                Name: $('#txtOrderDetailName_Add').val(),
+                orderDetail: $('#ddlOrderDetailOrderAdd').val(),
+                orderDetail: $('#txtOrderDetailUnitPrice_Add').val(),
+                orderDetail: $('#txtOrderDetailDiscount_Add').val(),
+
             }
 
 
             var formData = new FormData();
-            formData.append("Name", foodDetail.Name);
-            formData.append("FoodCategoryGuid", foodDetail.FoodCategoryGuid);
-            formData.append("RoleGuid", foodDetail.RoleGuid);
+            formData.append("Name", orderDetail.Name);
+            formData.append("OrderGuid", orderDetail.OrderGuid);
+            formData.append("UnitPrice", orderDetail.UnitPrice);
+            formData.append("Discount", orderDetail.Discount);
 
 
 
             $.ajax({
-                url: '/Admin/AddFoodDetail',
+                url: '/Admin/AddOrderDetail',
                 type: 'POST',
                 data: formData,
                 cahce: false,
@@ -224,7 +227,7 @@
                         Swal.fire({
                             position: 'top-end',
                             icon: 'success',
-                            title: 'Mağza Başarıyla Eklendi',
+                            title: 'Sipariş Detayı Başarıyla Eklendi',
                             showConfirmButton: false,
                             timer: 3000
                         })
@@ -259,22 +262,20 @@
 
         });
 
-        $('.btnFoodDetail').click(function () {
+        $('.btnOrderDetail').click(function () {
             var guid = $(this).attr('data-guid');
             $.ajax({
-                url: '/Admin/FoodDetail/' + guid,
+                url: '/Admin/OrderDetail/' + guid,
                 type: 'get',
                 success: function (response) {
                     if (response.success) {
 
-                        $('#txtFoodDetailName_Update').val(response.storeDetail.Name);
+                        $('#txtOrderDetailName_Update').val(response.storeOrderDetail.Name);
 
-                        $('#btnFoodDetail_Update').attr('data-guid', guid)
+                        $('#btnOrderDetail_Update').attr('data-guid', guid)
 
-                        const select = document.querySelector('#ddlFoodDetailFoodCategory_Update')
-                        select.value = response.foodDetail.FoodCategoryGuid
-                        const select = document.querySelector('#ddlFoodDetailRole_Update')
-                        select.value = response.foodDetail.RoleGuid
+                        const select = document.querySelector('#ddlOrderDetailOrderAdd')
+                        select.value = response.storeOrderDetail.StoreOrderGuid
                     }
                     else {
 
@@ -309,25 +310,27 @@
         });
 
 
-        $('#btnFoodDetail_Update').click(function () {
+        $('#btnOrderDetail_Update').click(function () {
 
-            var foodDetail = {
-                Name: $('#txtFoodDetailName_Update').val(),
-                foodDetail: $('#ddlFoodDetailFoodCategory_Update').val(),
-                foodDetail: $('#ddlFoodDetailGuid_Update').val(),
+            var orderDetail = {
+                Name: $('#txtOrederDetailName_Update').val(),
+                orderDetail: $('#ddlOrderDetailOrder_Update').val(),
+                orderDetail: $('#txtOrderDetailUnitPrice_Update').val(),
+                orderDetail: $('#txtOrderDetailDiscount_Update').val(),
                 Guid: $(this).attr('data-guid')
             }
 
 
             var formData = new FormData();
-            formData.append("Name", foodDetail.Name);
-            formData.append("FoodCategory", foodDetail.FoodCategory);
-            formData.append("Role", foodDetail.Role);
-            formData.append("Guid", foodDetail.Guid);
+            formData.append("Name", orderDetail.Name);
+            formData.append("Order", orderDetail.Order);
+            formData.append("UnitPrice", orderDetail.UnitPrice);
+            formData.append("Discount", orderDetail.Discount);
+            formData.append("Guid", orderDetail.Guid);
 
 
             $.ajax({
-                url: '/Admin/UpdateFoodDetail',
+                url: '/Admin/UpdateOrderDetail',
                 type: 'POST',
                 data: formData,
                 cahce: false,
@@ -342,7 +345,7 @@
                         Swal.fire({
                             position: 'top-end',
                             icon: 'success',
-                            title: 'Mağza Başarıyla Güncellendi',
+                            title: 'Sipariş Detayı Başarıyla Güncellendi',
                             showConfirmButton: false,
                             timer: 3000
                         })
@@ -378,12 +381,12 @@
         });
 
 
-        $('.btnRemoveFoodDetail').click(function () {
-            var foodDetailGuid = $(this).attr('data-guid');
+        $('.btnRemoveOrderDetail').click(function () {
+            var orderDetailGuid = $(this).attr('data-guid');
 
             Swal.fire({
                 title: 'UYARI!',
-                text: "'Mağzayı Silmek İstediğinizden Emin misiniz?",
+                text: "'Sipariş Detayını Silmek İstediğinizden Emin misiniz?",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
@@ -393,7 +396,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
-                        url: '/Admin/RemoveFoodDetail/' + foodDetailGuid,
+                        url: '/Admin/RemoveOrderDetail/' + orderDetailGuid,
                         type: 'post',
                         beforeSend: function (xhr) {
                             xhr.setRequestHeader("XSRF-TOKEN", $('input:hidden[name="__RequestVerificationToken"]').val());

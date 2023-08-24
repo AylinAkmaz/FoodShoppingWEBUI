@@ -1,13 +1,13 @@
 ﻿@using FoodShoppingWEBUI.Core.ViewModel;
 @model FoodDetailViewModel
 @{
-    ViewData["Title"] = "Yemek Mağzaları";
+    ViewData["Title"] = "Yemek Mağazaları";
     Layout = "~/Areas/AdminPanel/Views/_Layout.cshtml";
 }
 @Html.AntiForgeryToken()
 <div class="card">
     <div class="card-header">
-        <h3 class="card-title">Yemek Mağzaları</h3>
+        <h3 class="card-title">Yemek Mağazaları</h3>
         <div class="card-tools">
             <button type="button" class="btn btn-block btn-info" data-toggle="modal" data-target="#modal-NewFoodDetail">Ekle</button>
             <button type="button" class="btn btn-block btn-warning" data-toggle="modal" data-target="#modal-GetFoodCategories">Kategoriler</button>
@@ -21,9 +21,14 @@
             <thead>
                 <tr>
                     <th style="width: 10px">#</th>
-                    <th>Mağza Adı</th>
+                    <th>Mağaza Adı</th>
                     <th>Kategoriler</th>
                     <th>Roller</th>
+                    <th>Adres</th>
+                    <th>Açılış Saati</th>
+                    <th>Kapanış Saati</th>
+                    <th>Teslimat Süresi</th>
+                    <th>Hakkında</th>
                     <th style="width:20%"></th>
 
                 </tr>
@@ -37,6 +42,12 @@
                             <td>@Model.FoodDetails[i].Name</td>
                             <td>@Model.FoodDetails[i].FoodCategoryName</td>
                             <td>@Model.FoodDetails[i].RoleName</td>
+                            <td>@Model.FoodDetails[i].Adress</td>
+                            <td>@Model.FoodDetails[i].Openning</td>
+                            <td>@Model.FoodDetails[i].Closing</td>
+                            <td>@Model.FoodDetails[i].DeliveryTıme</td>
+                            <td>@Model.FoodDetails[i].About</td>
+
                             <td>
                                 <div class="btn-group">
                                     <button type="button" class="btn btn-info btnFoodDetail" data-guid=@Model.FoodDetails[i].Guid data-toggle="modal" data-target="#modal-DetayFoodDetail">Güncelle</button>
@@ -46,9 +57,6 @@
                         </tr>
                     }
                 }
-
-
-
 
             </tbody>
         </table>
@@ -67,7 +75,7 @@
                 </button>
             </div>
             <div class="modal-body">
-               <div class="form-group">
+                <div class="form-group">
                     <label for="ddlFoodDetailFoodCategory">Kategorisi</label>
                     <select class="custom-select rounded-0" id="ddlFoodDetailFoodCategory">
                         @{
@@ -76,9 +84,6 @@
                                 <option value=@Model.FoodCategories[i].Guid>@Model.FoodCategories[i].Name</option>
                             }
                         }
-
-
-
                     </select>
                 </div>
             </div>
@@ -109,8 +114,6 @@
                             }
                         }
 
-
-
                     </select>
                 </div>
             </div>
@@ -123,65 +126,95 @@
 
 
 <div class="modal fade" id="modal-NewFoodDetail">
-    <div class="modal-dialog">
+    <div class="modal-dialo">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">Mağza Ekle</h4>
+                <h4 class="modal-title">Mağaza Ekle</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <label for="txtFoodDetailName_Add">Mağza Adı</label>
+                    <label for="txtFoodDetailName_Add">Mağaza Adı</label>
                     <input type="text" class="form-control" id="txtFoodDetailName_Add">
                 </div>
-
-                <div class="form-group">
-                    <label for="ddlFoodDetailFoodCategory">Kategorisi</label>
-                    <select class="custom-select rounded-0" id="ddlFoodDetailFoodCategoryAdd">
-                        @{
-                            for (int i = 0; i < Model.FoodCategories.Count(); i++)
-                            {
-                                <option value=@Model.FoodCategories[i].Guid>@Model.FoodCategories[i].Name</option>
-                            }
+            </div>
+            <div class="form-group">
+                <label for="ddlFoodDetailFoodCategory">Kategorisi</label>
+                <select class="custom-select rounded-0" id="ddlFoodDetailFoodCategoryAdd">
+                    @{
+                        for (int i = 0; i < Model.FoodCategories.Count(); i++)
+                        {
+                            <option value=@Model.FoodCategories[i].Guid>@Model.FoodCategories[i].Name</option>
                         }
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="ddlFoodDetailRole">Rolü</label>
-                    <select class="custom-select rounded-0" id="ddlFoodDetailRoleAdd">
-                        @{
-                            for (int i = 0; i < Model.Roles.Count(); i++)
-                            {
-                                <option value=@Model.Roles[i].Guid>@Model.Roles[i].Name</option>
-                            }
-                        }
+                    }
                 </select>
+            </div>
+            <div class="form-group">
+                <label for="ddlFoodDetailRole">Rolü</label>
+                <select class="custom-select rounded-0" id="ddlFoodDetailRoleAdd">
+                    @{
+                        for (int i = 0; i < Model.Roles.Count(); i++)
+                        {
+                            <option value=@Model.Roles[i].Guid>@Model.Roles[i].Name</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="txtFoodDetailAdress_Add">Mağaza Adresi</label>
+                    <input type="text" class="form-control" id="txtFoodDetailAdress_Add">
                 </div>
             </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="txtFoodDetailOpen_Add">Mağaza Açılış Saati</label>
+                    <input type="text" class="form-control" id="txtFoodDetailOpen_Add">
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="txtFoodDetailClose_Add">Mağaza Kapanış Saati</label>
+                    <input type="text" class="form-control" id="txtFoodDetailClose_Add">
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="txtFoodDetailDeliveryTıme_Add">Mağaza Teslimat Süresi</label>
+                    <input type="text" class="form-control" id="txtFoodDetailDeliveryTıme_Add">
+                </div>
+            </div>
+
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="txtFoodDetailAbout_Add">Hakkında</label>
+                    <input type="text" class="form-control" id="txtFoodDetailAbout_Add">
+                </div>
+            </div>
+
+
             <div class="modal-footer justify-content-between">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Kapat</button>
                 <button type="button" class="btn btn-primary" id="btnFoodDetail_Add">Kaydet</button>
             </div>
         </div>
-        <!-- /.modal-content -->
     </div>
-    <!-- /.modal-dialog -->
 </div>
 
 <div class="modal fade" id="modal-FoodDetailUpdate">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">Mağzayı Güncelle</h4>
+                <h4 class="modal-title">Mağazayı Güncelle</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <label for="txtFoodDetailName_Update">Mağza Adı</label>
+                    <label for="txtFoodDetailName_Update">Mağaza Adı</label>
                     <input type="text" class="form-control" id="txtFoodDetailName_Update">
                 </div>
 
@@ -208,6 +241,39 @@
                     </select>
                 </div>
 
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="txtFoodDetailAdress_Update">Mağaza Adresi</label>
+                        <input type="text" class="form-control" id="txtFoodDetailAdress_Update">
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="txtFoodDetailOpen_Update">Mağaza Açılış Saati</label>
+                        <input type="text" class="form-control" id="txtFoodDetailOpen_Update">
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="txtFoodDetailClose_Update">Mağaza Kapanış Saati</label>
+                        <input type="text" class="form-control" id="txtFoodDetailClose_Update">
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="txtFoodDetailDeliveryTıme_Update">Mağaza Teslimat Süresi</label>
+                        <input type="text" class="form-control" id="txtFoodDetailDeliveryTıme_Update">
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="txtFoodDetailAbout_Update">Hakkında</label>
+                        <input type="text" class="form-control" id="txtFoodDetailAbout_Update">
+                    </div>
+                </div>
+
+
+
             </div>
             <div class="modal-footer justify-content-between">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Kapat</button>
@@ -230,21 +296,33 @@
             "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
         }).buttons().container().appendTo('#tblFoodDetail_wrapper .col-md-6:eq(0)');
 
+
+
         $('#btnFoodDetail_Add').click(function () {
 
-            var foodDetail = {
+            var foodDetailDTO = {
+
                 Name: $('#txtFoodDetailName_Add').val(),
                 FoodCategoryGuid: $('#ddlFoodDetailFoodCategoryAdd').val(),
                 RoleGuid: $('#ddlFoodDetailRoleAdd').val(),
+                Adress: $('#txtFoodDetailAdress_Add').val(),
+                Openning: $('#txtFoodDetailOpen_Add').val(),
+                Closing: $('#txtFoodDetailClose_Add').val(),
+                DeliveryTıme: $('#txtFoodDetailDeliveryTıme_Add').val(),
+                About: $('#txtFoodDetailAbout_Add').val(),
+
             }
 
 
             var formData = new FormData();
-            formData.append("Name", foodDetail.Name);
-            formData.append("FoodCategoryGuid", foodDetail.FoodCategoryGuid);
-            formData.append("RoleGuid", foodDetail.RoleGuid);
-
-
+            formData.append("Name", foodDetailDTO.Name);
+            formData.append("FoodCategoryGuid", foodDetailDTO.FoodCategoryGuid);
+            formData.append("RoleGuid", foodDetailDTO.RoleGuid);
+            formData.append("Adress", foodDetailDTO.Adress);
+            formData.append("Openning", foodDetailDTO.Openning);
+            formData.append("Closing", foodDetailDTO.Closing);
+            formData.append("DeliveryTıme", foodDetailDTO.DeliveryTıme);
+            formData.append("About", foodDetailDTO.About);
 
             $.ajax({
                 url: '/Admin/AddFoodDetail',
@@ -262,7 +340,7 @@
                         Swal.fire({
                             position: 'top-end',
                             icon: 'success',
-                            title: 'Mağza Başarıyla Eklendi',
+                            title: 'Mağaza Başarıyla Eklendi',
                             showConfirmButton: false,
                             timer: 3000
                         })
@@ -305,14 +383,22 @@
                 success: function (response) {
                     if (response.success) {
 
-                        $('#txtFoodDetailName_Update').val(response.storeDetail.Name);
+                        $('#txtFoodDetailName_Update').val(response.foodDetail.Name);
+                        $('#txtFoodDetailAdress_Update').val(response.foodDetail.Adress);
+                        $('#txtFoodDetailOpen_Update').val(response.foodDetail.Open);
+                        $('#txtFoodDetailClose_Update').val(response.foodDetail.Close);
+                        $('#txtFoodDetailDeliveryTıme_Update').val(response.foodDetail.DeliveryTıme);
+                        $('#txtFoodDetailAbout_Update').val(response.foodDetail.About);
 
                         $('#btnFoodDetail_Update').attr('data-guid', guid)
 
                         const select = document.querySelector('#ddlFoodDetailFoodCategory_Update')
                         select.value = response.foodDetail.FoodCategoryGuid
+                        $('#btnFoodDetail_Update').attr('data-guid', guid)
                         const select = document.querySelector('#ddlFoodDetailRole_Update')
                         select.value = response.foodDetail.RoleGuid
+
+
                     }
                     else {
 
@@ -353,6 +439,12 @@
                 Name: $('#txtFoodDetailName_Update').val(),
                 foodDetail: $('#ddlFoodDetailFoodCategory_Update').val(),
                 foodDetail: $('#ddlFoodDetailGuid_Update').val(),
+                Adress: $('#txtFoodDetailAdress_Update').val(),
+                Openning: $('#txtFoodDetailOpen_Update').val(),
+                Closing: $('#txtFoodDetailClose_Update').val(),
+                DeliveryTıme: $('#txtFoodDetailDeliveryTıme_Update').val(),
+                About: $('#txtFoodDetailAbout_Update').val(),
+
                 Guid: $(this).attr('data-guid')
             }
 
@@ -361,6 +453,11 @@
             formData.append("Name", foodDetail.Name);
             formData.append("FoodCategory", foodDetail.FoodCategory);
             formData.append("Role", foodDetail.Role);
+            formData.append("Adress", foodDetail.Adress);
+            formData.append("Opening", foodDetail.Openning);
+            formData.append("Closing", foodDetail.Closing);
+            formData.append("DeliveryTıme", foodDetail.DeliveryTıme);
+            formData.append("About", foodDetail.About);
             formData.append("Guid", foodDetail.Guid);
 
 
@@ -380,7 +477,7 @@
                         Swal.fire({
                             position: 'top-end',
                             icon: 'success',
-                            title: 'Mağza Başarıyla Güncellendi',
+                            title: 'Mağaza Başarıyla Güncellendi',
                             showConfirmButton: false,
                             timer: 3000
                         })
@@ -421,7 +518,7 @@
 
             Swal.fire({
                 title: 'UYARI!',
-                text: "'Mağzayı Silmek İstediğinizden Emin misiniz?",
+                text: "'Mağazayı Silmek İstediğinizden Emin misiniz?",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
@@ -442,7 +539,7 @@
                                 Swal.fire({
                                     position: 'top-end',
                                     icon: 'success',
-                                    title: 'Ürün Başarıyla Silindi',
+                                    title: 'Mağaza Başarıyla Silindi',
                                     showConfirmButton: false,
                                     timer: 3000
                                 })

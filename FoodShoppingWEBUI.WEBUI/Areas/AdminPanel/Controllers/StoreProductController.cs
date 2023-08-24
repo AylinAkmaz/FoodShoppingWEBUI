@@ -43,7 +43,7 @@ namespace FoodShoppingWEBUI.WEBUI.Areas.AdminPanel.Controllers
             {
                 string filename = storeProductImage.FileName.Split('.')[storeProductImage.FileName.Split('.').Length - 2] + "_" + Guid.NewGuid() + "." + storeProductImage.FileName.Split('.')[storeProductImage.FileName.Split('.').Length - 1];
 
-                string uploadFolder = Path.Combine(_webHostEnvironment.WebRootPath, "MediaUploads", filename);
+                string uploadFolder = Path.Combine(_webHostEnvironment.WebRootPath, "MediaUpload", filename);
 
                 using (var fileStream = new FileStream(uploadFolder, FileMode.Create))
                 {
@@ -78,7 +78,7 @@ namespace FoodShoppingWEBUI.WEBUI.Areas.AdminPanel.Controllers
                 return Json(new { success = false, message = "Hata Oluştu" });
             }
         }
-        [HttpGet("/Admin/MarketÜrünü{storeProductGUID}")]
+        [HttpGet("/Admin/StoreProduct{guid}")]
         public async Task<IActionResult> GetStoreProduct(Guid guid)
         {
             var url = "http://localhost:5291/StoreProduct/" + guid;

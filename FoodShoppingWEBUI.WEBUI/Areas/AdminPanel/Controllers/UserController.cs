@@ -27,9 +27,38 @@ namespace FoodShoppingWEBUI.WEBUI.Areas.AdminPanel.Controllers
 
 			return View(users);
 		}
+        [ValidateAntiForgeryToken]
+        [HttpPost("/Admin/AddUser")]
+        public async Task<IActionResult> AddUser(UserDTO user)
+        {
 
+            var url = "http://localhost:5291/AddUser";
+            var client = new RestClient(url);
+            var request = new RestRequest(url, Method.Post);
+            request.AddHeader("Content-Type", "application/json");
+            request.AddHeader("Authorization", "Bearer " + SessionManager.LoggedUser.Token);
+            var body = JsonConvert.SerializeObject(user);
+            request.AddBody(body, "application/json");
+            RestResponse restResponse = await client.ExecuteAsync(request);
 
-		[HttpGet("/Admin/User/{userGUID}")]
+            var responseObject = JsonConvert.DeserializeObject<APIResult<bool>>(restResponse.Content);
+
+            if (restResponse.StatusCode == HttpStatusCode.OK)
+            {
+                return Json(new { success = true, data = responseObject.Data });
+            }
+            else if (restResponse.StatusCode == HttpStatusCode.BadRequest)
+            {
+                return Json(new { success = false, HataBilgisi = responseObject.HataBilgisi });
+            }
+            else
+            {
+                return Json(new { success = false, HataBilgisi = responseObject.HataBilgisi });
+            }
+
+        }
+
+        [HttpGet("/Admin/User/{userGUID}")]
 		public async Task<IActionResult> GetUser(Guid userGUID)
 		{
 			var url = "http://localhost:5291/User/" + userGUID;

@@ -266,9 +266,8 @@
 
         });
 
-
         $('.btnRoleSil').click(function () {
-            var RoleGuid = $(this).attr('data-guid');
+            var roleGuid = $(this).attr('data-Guid');
 
             Swal.fire({
                 title: 'UYARI!',
@@ -282,7 +281,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
-                        url: '/Admin/RemoveRole/' + RoleGuid,
+                        url: '/Admin/RemoveRole/' + roleGuid,
                         type: 'post',
                         beforeSend: function (xhr) {
                             xhr.setRequestHeader("XSRF-TOKEN", $('input:hidden[name="__RequestVerificationToken"]').val());

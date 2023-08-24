@@ -8,7 +8,7 @@
 @Html.AntiForgeryToken()
 <div class="card">
     <div class="card-header">
-        <h3 class="card-title">Market Detayları</h3>
+        <h3 class="card-title">Market Alt Kategori</h3>
         <div class="card-tools">
             <button type="button" class="btn btn-block btn-warning" data-toggle="modal" data-target="#modal-GetStoreCategories">Kategoriler</button>
             <button type="button" class="btn btn-block btn-info" data-toggle="modal" data-target="#modal-NewStoreDetail">Ekle</button>
@@ -21,7 +21,7 @@
             <thead>
                 <tr>
                     <th style="width: 10px">#</th>
-                    <th>Market Detay Adı</th>
+                    <th>Market Alt Kategori Adı</th>
                     <th>Kategoriler</th>
                     <th style="width:20%"></th>
 
@@ -50,9 +50,6 @@
 
             </tbody>
         </table>
-
-      @*@await Component.InvokeAsync("StoreDetails",Model)*@
-
 
 
     </div>
@@ -85,14 +82,14 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">Market Detay Ekle</h4>
+                <h4 class="modal-title">Market Alt Kategori Ekle</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <label for="txtStoreDetailName_Add">Market Detay Adı</label>
+                    <label for="txtStoreDetailName_Add">Market Alt Kategori Adı</label>
                     <input type="text" class="form-control" id="txtStoreDetailName_Add">
                 </div>
                
@@ -105,9 +102,6 @@
                                 <option value=@Model.StoreCategories[i].Guid>@Model.StoreCategories[i].Name</option>
                             }
                         }
-
-
-
                     </select>
                 </div>
                
@@ -117,28 +111,26 @@
                 <button type="button" class="btn btn-primary" id="btnStoreDetail_Add">Kaydet</button>
             </div>
         </div>
-        <!-- /.modal-content -->
     </div>
-    <!-- /.modal-dialog -->
 </div>
 
-<div class="modal fade" id="modal-StoreDetailUpdate">
+<div class="modal fade" id="modal-DetayStoreDetail">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">Market detayını Güncelle</h4>
+                <h4 class="modal-title">Market Alt Kategori Güncelle</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <label for="txtStoreDetailName_Update">Market Detay Adı</label>
+                    <label for="txtStoreDetailName_Update">Market Alt Kategori Adı</label>
                     <input type="text" class="form-control" id="txtStoreDetailName_Update">
                 </div>
                 
                 <div class="form-group">
-                    <label for="ddlStoreDetailStoreCategory">Ana Kategorisi</label>
+                    <label for="ddlStoreDetailStoreCategory_Update">Ana Kategorisi</label>
                     <select class="custom-select rounded-0" id="ddlStoreDetailStoreCategory_Update">
                         @{
                             for (int i = 0; i < Model.StoreCategories.Count; i++)
@@ -146,8 +138,6 @@
                                 <option value=@Model.StoreCategories[i].Guid>@Model.StoreCategories[i].Name</option>
                             }
                         }
-
-
 
                     </select>
                 </div>
@@ -158,9 +148,7 @@
                 <button type="button" class="btn btn-primary" id="btnStoreDetail_Update">Kaydet</button>
             </div>
         </div>
-        <!-- /.modal-content -->
     </div>
-    <!-- /.modal-dialog -->
 </div>
 
 
@@ -237,6 +225,7 @@
             });
 
         });
+        
 
         $('.btnStoreDetail').click(function () {
             var guid = $(this).attr('data-guid');
@@ -245,13 +234,12 @@
                 type: 'get',
                 success: function (response) {
                     if (response.success) {
-
-                        $('#txtStoreDetailName_Update').val(response.storeDetail.Name);
-
+                        $('#modal-DetayStoreDetail').modal('show');
+                        $('#txtStoreDetailName_Update').val(response.data.Name);
                         $('#btnStoreDetail_Update').attr('data-guid', guid)
 
                         const select = document.querySelector('#ddlStoreDetailStoreCategory_Update')
-                        select.value = response.storeDetail.StoreCategoryGuid
+                        select.value = response.data.StoreCategoryGuid
                     }
                     else {
 
@@ -284,6 +272,7 @@
 
 
         });
+     
 
 
         $('#btnStoreDetail_Update').click(function () {
@@ -303,7 +292,7 @@
 
             $.ajax({
                 url: '/Admin/UpdateStoreDetail',
-                type: 'POST',
+                type: 'post',
                 data: formData,
                 cahce: false,
                 contentType: false,
@@ -353,7 +342,7 @@
         });
 
 
-        $('.btnRemoveStoreDetail').click(function () {
+        $('.btnStoreDetailSil').click(function () {
             var storeDetailGuid = $(this).attr('data-guid');
 
             Swal.fire({

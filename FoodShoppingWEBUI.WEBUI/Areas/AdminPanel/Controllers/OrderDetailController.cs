@@ -13,7 +13,7 @@ namespace FoodShoppingWEBUI.WEBUI.Areas.AdminPanel.Controllers
     [Area("AdminPanel")]
     public class OrderDetailController : Controller
     {
-        [HttpGet("/Admin/StoreOrderDetail")]
+        [HttpGet("/Admin/OrderDetail")]
         public async Task<IActionResult> Index()
         {
             OrderDetailViewModel orderDetailViewModel = new()

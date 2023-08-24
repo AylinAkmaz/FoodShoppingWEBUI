@@ -36,12 +36,12 @@
                 @{
                     for (int i = 0; i < Model.Menus.Count(); i++)
                     {
-                        string menuImagePath = "/MediaUpload/" + @Model.Menus[i].FeaturedImage;
+                        string imagePath = "/MediaUpload/" + @Model.Menus[i].FeaturedImage;
 
                         <tr>
                             <td>@Convert.ToInt32(i+1)</td>
-                            <a href="@menuImagePath" data-toggle="lightbox" data-title="@Model.Menus[i].Name">
-                                <img src="@menuImagePath" class="img-fluid mb-2" alt="@Model.Menus[i].Name" width="100" />
+                            <a href="@imagePath" data-toggle="lightbox" data-title="@Model.Menus[i].Name">
+                                <img src="@imagePath" class="img-fluid mb-2" alt="black sample" width="100" />
                             </a>
                             <td>@Model.Menus[i].Name</td>
                             <td>@Model.Menus[i].FoodProductName</td>
@@ -139,7 +139,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="ddlMenuFoodDetail">Mağazası</label>
+                    <label for="ddlMenuFoodDetailAdd">Mağazası</label>
                     <select class="custom-select rounded-0" id="ddlMenuFoodDetailAdd">
                         @{
                             for (int i = 0; i < Model.FoodDetails.Count(); i++)
@@ -173,7 +173,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="fuMenuFeaturedImage_Add">Öne Çıkan Görsel</label>
+                            <label for="fuMenuFeaturedImage">Öne Çıkan Görsel</label>
                             <div class="input-group">
                                 <div class="custom-file">
                                     <input type="file" class="custom-file-input" id="fuMenuFeaturedImage_Add">
@@ -193,7 +193,7 @@
     </div>
 </div>
 
-<div class="modal fade" id="modal-MenuUpdate">
+<div class="modal fade" id="modal-DetayMenu">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -243,7 +243,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="fuMenuFeaturedImage_Update">Öne Çıkan Görsel</label>
+                            <label for="fuMenuFeaturedImage">Öne Çıkan Görsel</label>
                             <div class="input-group">
                                 <div class="custom-file">
                                     <input type="file" class="custom-file-input" id="fuMenuFeaturedImage_Update">
@@ -278,21 +278,23 @@
 
             var menu = {
                 Name: $('#txtMenuName_Add').val(),
-                foodDetailGuid: $('#ddlFoodDetailFoodCategoryAdd').val(),
-                foodProduct: $('#ddlFoodDetailFoodProducteAdd').val(),
+                foodDetailGuid: $('#ddlMenuFoodDetailAdd').val(),
+                foodProduct: $('#ddlMenuFoodProduct_Add').val(),
             }
 
+            var files = $('#fuMenuFeaturedImage_Add').prop('files');
 
             var formData = new FormData();
             formData.append("Name", menu.Name);
             formData.append("foodDetailGuid", menu.foodDetailGuid);
             formData.append("foodProductGuid", menu.foodProductGuid);
+            formData.append("menuImage", files[0]);
 
 
 
             $.ajax({
                 url: '/Admin/AddMenu',
-                type: 'POST',
+                type: 'post',
                 data: formData,
                 cahce: false,
                 contentType: false,
@@ -341,22 +343,22 @@
 
         });
 
-        $('.btnMenu').click(function () {
+
+        $('.btnMenuDetail').click(function () {
             var guid = $(this).attr('data-guid');
             $.ajax({
                 url: '/Admin/Menu/' + guid,
                 type: 'get',
                 success: function (response) {
                     if (response.success) {
-
-                        $('#txtMenuName_Update').val(response.storeDetail.Name);
-
+                        $('#modal-DetayMenu').modal('show');
+                        $('#txtMenuName_Update').val(response.data.Name);
                         $('#btnMenu_Update').attr('data-guid', guid)
 
                         const select = document.querySelector('#ddlMenuFoodDetail_Update')
-                        select.value = response.menu.foodDetailGuid
+                        select.value = response.DetayMenu.foodDetailGuid
                         const select = document.querySelector('#ddlMenuFoodProduct_Update')
-                        select.value = response.foodDetail.RoleGuid
+                        select.value = response.DetayMenu.foodProductGuid
                     }
                     else {
 
@@ -390,27 +392,30 @@
 
         });
 
+      
 
-        $('#btnFoodDetail_Update').click(function () {
+        $('#btnMenu_Update').click(function () {
 
-            var foodDetail = {
-                Name: $('#txtFoodDetailName_Update').val(),
-                foodDetail: $('#ddlFoodDetailFoodCategory_Update').val(),
-                foodDetail: $('#ddlFoodDetailGuid_Update').val(),
+            var menu = {
+                Name: $('#txtMenuName_Update').val(),
+                foodDetailGuid: $('#ddlMenuFoodDetail_Update').val(),
+                foodProductGuid: $('#ddlMenuFoodProduct_Update').val(),
                 Guid: $(this).attr('data-guid')
             }
+            var files = $('#fuMenuFeaturedImage_Update').prop('files');
 
 
             var formData = new FormData();
-            formData.append("Name", foodDetail.Name);
-            formData.append("FoodCategory", foodDetail.FoodCategory);
-            formData.append("Role", foodDetail.Role);
-            formData.append("Guid", foodDetail.Guid);
+            formData.append("Name", menu.Name);
+            formData.append("foodDetailGuid", menu.foodDetailGuid);
+            formData.append("foodProductGuid", menu.foodProductGuid);
+            formData.append("Guid", menu.Guid);
+            formData.append("menuImage", files[0]);
 
 
             $.ajax({
-                url: '/Admin/UpdateFoodDetail',
-                type: 'POST',
+                url: '/Admin/UpdateMenu',
+                type: 'post',
                 data: formData,
                 cahce: false,
                 contentType: false,
@@ -424,7 +429,7 @@
                         Swal.fire({
                             position: 'top-end',
                             icon: 'success',
-                            title: 'Mağza Başarıyla Güncellendi',
+                            title: 'Menu Başarıyla Güncellendi',
                             showConfirmButton: false,
                             timer: 3000
                         })
@@ -460,12 +465,12 @@
         });
 
 
-        $('.btnRemoveFoodDetail').click(function () {
-            var foodDetailGuid = $(this).attr('data-guid');
+        $('.btnMenuDetailSil').click(function () {
+            var menuGuid = $(this).attr('data-guid');
 
             Swal.fire({
                 title: 'UYARI!',
-                text: "'Mağzayı Silmek İstediğinizden Emin misiniz?",
+                text: "'Menüyü Silmek İstediğinizden Emin misiniz?",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
@@ -475,7 +480,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
-                        url: '/Admin/RemoveFoodDetail/' + foodDetailGuid,
+                        url: '/Admin/RemoveMenu/' + menuGuid,
                         type: 'post',
                         beforeSend: function (xhr) {
                             xhr.setRequestHeader("XSRF-TOKEN", $('input:hidden[name="__RequestVerificationToken"]').val());

@@ -69,7 +69,7 @@
 
         $(document).on('click', '.btnFoodCategoryDetail', function () {
             $('#txtYemekKategoriAd_Update').val('');
-            var guid = $(this).attr('data-guid');
+            var guid = $(this).attr('data-Guid');
             $.ajax({
                 url: '/Admin/FoodCategory/' + guid,
                 type: 'get',
@@ -78,7 +78,7 @@
 
                         $('#modal-DetayYemekKategori').modal('show');
 
-                        $('#btnUpdateYemekKategori').attr('data-guid', guid)
+                        $('#btnUpdateYemekKategori').attr('data-Guid', guid)
 
                         $('#txtYemekKategoriAd_Update').val(response.data.Name);
 
@@ -169,7 +169,7 @@
 
         $('.btnFoodCategoryDetail').click(function () {
             $('#txtYemekKategoriAd_Update').val('');
-            var guid = $(this).attr('data-guid');
+            var guid = $(this).attr('data-Guid');
             $.ajax({
                 url: '/Admin/FoodCategory/' + guid,
                 type: 'get',
@@ -177,7 +177,7 @@
                     if (response.success) {
 
 
-                        $('#btnUpdateYemekKategori').attr('data-guid', guid)
+                        $('#btnUpdateYemekKategori').attr('data-Guid', guid)
 
                         $('#txtYemekKategoriAd_Update').val(response.data.Name);
 
@@ -221,7 +221,7 @@
             var foodCategory = new Object();
 
             foodCategory.Name = $('#txtYemekKategoriAd_Update').val();
-            foodCategory.Guid = $(this).attr('data-guid');
+            foodCategory.Guid = $(this).attr('data-Guid');
 
             $.ajax({
                 url: '/Admin/UpdateFoodCategory',
@@ -272,7 +272,7 @@
 
 
         $('.btnYemekKategoriSil').click(function () {
-            var foodCategoryGuid = $(this).attr('data-guid');
+            var FoodCategoryGuid = $(this).attr('data-Guid');
 
             Swal.fire({
                 title: 'UYARI!',
@@ -286,7 +286,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
-                        url: '/Admin/RemoveFoodCategory/' + foodCategoryGuid,
+                        url: '/Admin/RemoveFoodCategory/' + FoodCategoryGuid,
                         type: 'post',
                         beforeSend: function (xhr) {
                             xhr.setRequestHeader("XSRF-TOKEN", $('input:hidden[name="__RequestVerificationToken"]').val());

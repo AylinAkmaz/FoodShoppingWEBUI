@@ -63,37 +63,33 @@ namespace FoodShoppingWEBUI.WEBUI.Areas.AdminPanel.Controllers
                 };
 
                 productDTO.FeaturedImage = fileName;
+            }
+            var url = "http://localhost:5291/AddProduct";
+            var client = new RestClient(url);
+            var request = new RestRequest(url, Method.Post);
+            request.AddHeader("Content-Type", "application/json");
+            request.AddHeader("Authorization", "Bearer " + SessionManager.LoggedUser.Token);
+            var body = JsonConvert.SerializeObject(productDTO);
+            request.AddBody(body, "application/json");
+            RestResponse restResponse = await client.ExecuteAsync(request);
 
-                var url = "http://localhost:5291/AddProduct";
-                var client = new RestClient(url);
-                var request = new RestRequest(url, Method.Post);
-                request.AddHeader("Content-Type", "application/json");
-                request.AddHeader("Authorization", "Bearer " + SessionManager.LoggedUser.Token);
-                var body = JsonConvert.SerializeObject(productDTO);
-                request.AddBody(body, "application/json");
-                RestResponse restResponse = await client.ExecuteAsync(request);
+            var responseObject = JsonConvert.DeserializeObject<APIResult<bool>>(restResponse.Content);
 
-                var responseObject = JsonConvert.DeserializeObject<APIResult<bool>>(restResponse.Content);
-
-                if (restResponse.StatusCode == HttpStatusCode.OK)
-                {
-                    return Json(new { success = true, data = responseObject.Data });
-                }
-                else if (restResponse.StatusCode == HttpStatusCode.BadRequest)
-                {
-                    return Json(new { success = false, HataBilgisi = responseObject.HataBilgisi });
-                }
-                else
-                {
-                    return Json(new { success = false, HataBilgisi = responseObject.HataBilgisi });
-                }
+            if (restResponse.StatusCode == HttpStatusCode.OK)
+            {
+                return Json(new { success = true, data = responseObject.Data });
+            }
+            else if (restResponse.StatusCode == HttpStatusCode.BadRequest)
+            {
+                return Json(new { success = false, HataBilgisi = responseObject.HataBilgisi });
             }
             else
             {
-                return Json(new { });
+                return Json(new { success = false, HataBilgisi = responseObject.HataBilgisi });
             }
-
         }
+
+
 
         [ValidateAntiForgeryToken]
         [HttpPost("/Admin/UpdateProduct")]
@@ -113,7 +109,10 @@ namespace FoodShoppingWEBUI.WEBUI.Areas.AdminPanel.Controllers
 
                 productDTO.FeaturedImage = fileName;
             }
-
+            else
+            {
+                productDTO.FeaturedImage = null;
+            }
             var url = "http://localhost:5291/UpdateProduct";
             var client = new RestClient(url);
             var request = new RestRequest(url, Method.Post);

@@ -2,6 +2,7 @@
 using FoodShoppingWEBUI.Core.Result;
 using FoodShoppingWEBUI.Core.ViewModel;
 using FoodShoppingWEBUI.Helper.SessionHelper;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using RestSharp;
@@ -13,6 +14,14 @@ namespace FoodShoppingWEBUI.WEBUI.Areas.AdminPanel.Controllers
 
     public class MenuController : Controller
     {
+        private readonly IWebHostEnvironment _webHostEnvironment;
+
+        public MenuController(IWebHostEnvironment webHostEnvironment)
+        {
+            _webHostEnvironment = webHostEnvironment;
+        }
+
+
         [HttpGet("/Admin/Menu")]
         public async Task<IActionResult> Index()
         {
@@ -44,8 +53,21 @@ namespace FoodShoppingWEBUI.WEBUI.Areas.AdminPanel.Controllers
 
         [ValidateAntiForgeryToken]
         [HttpPost("/Admin/AddMenu")]
-        public async Task<IActionResult> AddMenu(MenuDTO menu)
+        public async Task<IActionResult> AddMenu(MenuDTO menu,IFormFile menuImage)
         {
+            if (menuImage != null)
+            {
+                string fileName = menuImage.FileName.Split('.')[menuImage.FileName.Split('.').Length - 2] + "_" + Guid.NewGuid() + "." + menuImage.FileName.Split('.')[menuImage.FileName.Split('.').Length - 1];
+
+                string uploadFolder = Path.Combine(_webHostEnvironment.WebRootPath, "MediaUpload", fileName);
+
+                using (var fileStream = new FileStream(uploadFolder, FileMode.Create))
+                {
+                    menuImage.CopyTo(fileStream);
+                };
+
+                menu.FeaturedImage = fileName;
+            }
 
             var url = "http://localhost:5291/AddMenu";
             var client = new RestClient(url);
@@ -75,8 +97,25 @@ namespace FoodShoppingWEBUI.WEBUI.Areas.AdminPanel.Controllers
 
         [ValidateAntiForgeryToken]
         [HttpPost("/Admin/UpdateMenu")]
-        public async Task<IActionResult> UpdateMenu(MenuDTO menu)
+        public async Task<IActionResult> UpdateMenu(MenuDTO menu, IFormFile menuImage)
         {
+            if (menuImage != null)
+            {
+                string fileName = menuImage.FileName.Split('.')[menuImage.FileName.Split('.').Length - 2] + "_" + Guid.NewGuid() + "." + menuImage.FileName.Split('.')[menuImage.FileName.Split('.').Length - 1];
+
+                string uploadFolder = Path.Combine(_webHostEnvironment.WebRootPath, "MediaUpload", fileName);
+
+                using (var fileStream = new FileStream(uploadFolder, FileMode.Create))
+                {
+                    menuImage.CopyTo(fileStream);
+                };
+
+                menu.FeaturedImage = fileName;
+            }
+            else
+            {
+                menu.FeaturedImage = null;
+            }
 
             var url = "http://localhost:5291/UpdateMenu";
             var client = new RestClient(url);
